@@ -2,7 +2,7 @@
 host=mysql_host
 user=mysql_user
 password=mysql_password
-db_name=samdb
+db_name=ngsv
 
 [console]
 debug=False

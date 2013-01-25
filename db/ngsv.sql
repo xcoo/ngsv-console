@@ -2,16 +2,16 @@ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
-DROP SCHEMA IF EXISTS `samdb` ;
-CREATE SCHEMA IF NOT EXISTS `samdb` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
-USE `samdb` ;
+DROP SCHEMA IF EXISTS `ngsv` ;
+CREATE SCHEMA IF NOT EXISTS `ngsv` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
+USE `ngsv` ;
 
 -- -----------------------------------------------------
--- Table `samdb`.`sam`
+-- Table `ngsv`.`sam`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `samdb`.`sam` ;
+DROP TABLE IF EXISTS `ngsv`.`sam` ;
 
-CREATE  TABLE IF NOT EXISTS `samdb`.`sam` (
+CREATE  TABLE IF NOT EXISTS `ngsv`.`sam` (
   `sam_id` BIGINT NOT NULL AUTO_INCREMENT ,
   `file_name` VARCHAR(1024) NOT NULL ,
   `created_date` BIGINT NOT NULL ,
@@ -29,11 +29,11 @@ COLLATE = utf8_general_ci;
 
 
 -- -----------------------------------------------------
--- Table `samdb`.`chromosome`
+-- Table `ngsv`.`chromosome`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `samdb`.`chromosome` ;
+DROP TABLE IF EXISTS `ngsv`.`chromosome` ;
 
-CREATE  TABLE IF NOT EXISTS `samdb`.`chromosome` (
+CREATE  TABLE IF NOT EXISTS `ngsv`.`chromosome` (
   `chr_id` BIGINT NOT NULL AUTO_INCREMENT ,
   `chromosome` VARCHAR(45) NOT NULL ,
   PRIMARY KEY (`chr_id`) ,
@@ -42,11 +42,11 @@ ENGINE = MyISAM;
 
 
 -- -----------------------------------------------------
--- Table `samdb`.`sam_histogram`
+-- Table `ngsv`.`sam_histogram`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `samdb`.`sam_histogram` ;
+DROP TABLE IF EXISTS `ngsv`.`sam_histogram` ;
 
-CREATE  TABLE IF NOT EXISTS `samdb`.`sam_histogram` (
+CREATE  TABLE IF NOT EXISTS `ngsv`.`sam_histogram` (
   `sam_id` BIGINT NOT NULL ,
   `binsize` BIGINT NOT NULL ,
   `created_date` BIGINT NOT NULL ,
@@ -58,11 +58,11 @@ ENGINE = MyISAM;
 
 
 -- -----------------------------------------------------
--- Table `samdb`.`histogram_bin`
+-- Table `ngsv`.`histogram_bin`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `samdb`.`histogram_bin` ;
+DROP TABLE IF EXISTS `ngsv`.`histogram_bin` ;
 
-CREATE  TABLE IF NOT EXISTS `samdb`.`histogram_bin` (
+CREATE  TABLE IF NOT EXISTS `ngsv`.`histogram_bin` (
   `sam_histogram_id` BIGINT NOT NULL ,
   `value` BIGINT NOT NULL ,
   `position` BIGINT NOT NULL ,
@@ -76,11 +76,11 @@ ENGINE = MyISAM;
 
 
 -- -----------------------------------------------------
--- Table `samdb`.`bed`
+-- Table `ngsv`.`bed`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `samdb`.`bed` ;
+DROP TABLE IF EXISTS `ngsv`.`bed` ;
 
-CREATE  TABLE IF NOT EXISTS `samdb`.`bed` (
+CREATE  TABLE IF NOT EXISTS `ngsv`.`bed` (
   `bed_id` BIGINT NOT NULL AUTO_INCREMENT ,
   `file_name` VARCHAR(1024) NOT NULL ,
   `created_date` BIGINT NOT NULL ,
@@ -95,11 +95,11 @@ ENGINE = MyISAM;
 
 
 -- -----------------------------------------------------
--- Table `samdb`.`bed_fragment`
+-- Table `ngsv`.`bed_fragment`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `samdb`.`bed_fragment` ;
+DROP TABLE IF EXISTS `ngsv`.`bed_fragment` ;
 
-CREATE  TABLE IF NOT EXISTS `samdb`.`bed_fragment` (
+CREATE  TABLE IF NOT EXISTS `ngsv`.`bed_fragment` (
   `bed_fragment_id` BIGINT NOT NULL AUTO_INCREMENT ,
   `chr_id` BIGINT NOT NULL ,
   `chr_start` BIGINT NOT NULL ,
@@ -124,11 +124,11 @@ ENGINE = MyISAM;
 
 
 -- -----------------------------------------------------
--- Table `samdb`.`cytoband`
+-- Table `ngsv`.`cytoband`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `samdb`.`cytoband` ;
+DROP TABLE IF EXISTS `ngsv`.`cytoband` ;
 
-CREATE  TABLE IF NOT EXISTS `samdb`.`cytoband` (
+CREATE  TABLE IF NOT EXISTS `ngsv`.`cytoband` (
   `cytoband_id` BIGINT NOT NULL AUTO_INCREMENT ,
   `chr_id` BIGINT NOT NULL ,
   `chr_start` BIGINT NOT NULL ,
@@ -143,11 +143,11 @@ ENGINE = MyISAM;
 
 
 -- -----------------------------------------------------
--- Table `samdb`.`ref_gene`
+-- Table `ngsv`.`ref_gene`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `samdb`.`ref_gene` ;
+DROP TABLE IF EXISTS `ngsv`.`ref_gene` ;
 
-CREATE  TABLE IF NOT EXISTS `samdb`.`ref_gene` (
+CREATE  TABLE IF NOT EXISTS `ngsv`.`ref_gene` (
   `ref_gene_id` BIGINT NOT NULL AUTO_INCREMENT ,
   `bin` INT NOT NULL ,
   `name` TEXT NOT NULL ,

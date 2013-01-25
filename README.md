@@ -3,9 +3,12 @@
 ## Requirements
 
 * Python
+    * pysam (>= v0.7)
     * Flask
-    * MySQL-python
+    * gevent
+    * gevent-websocket
     * Celery
+    * MySQL-python
     * Cython
 * MySQL
 * RabbitMQ
