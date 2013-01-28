@@ -30,7 +30,12 @@ from gevent import pywsgi
 from geventwebsocket import WebSocketHandler, WebSocketError
 from celery.result import BaseAsyncResult
 from celery.task.control import inspect
+from sqlalchemy import create_engine
 
+from db.sam import SamDao
+from db.bed import BedDao
+from db.chromosome import ChromosomeDao
+from db.cytoband import CytobandDao
 from taskserver.tasks import load_sam, load_bed
 from config import Config
 
@@ -67,6 +72,9 @@ def list_active_task():
                 tasks_info.append({ 'result': r })
 
 list_active_task()
+
+db_url = 'mysql://%s:%s@%s/%s?charset=utf8' % (conf.db_user, conf.db_password, conf.db_host, conf.db_name)
+engine = create_engine(db_url, encoding='utf-8', convert_unicode=True, pool_recycle=3600)
 
 @app.route('/')
 def root():
@@ -123,7 +131,18 @@ def root():
 
 @app.route('/viewer')
 def viewer():
-    return render_template('viewer.html')
+    sam_dao = SamDao(engine)
+    bed_dao = BedDao(engine)
+    cytoband_dao = CytobandDao(engine)
+    chromosome_dao = ChromosomeDao(engine)
+
+    chrs = []
+    for chr_id in cytoband_dao.all_chr_id():
+        end = cytoband_dao.get_end_by_chr_id(chr_id)
+        chr = chromosome_dao.get_by_id(chr_id)
+        chrs.append({'name': chr.chromosome, 'end': end.chr_end})
+    
+    return render_template('viewer.html', sams=sam_dao.all(), beds=bed_dao.all(), chrs=chrs)
 
 @app.route('/help')
 def help():

@@ -1,0 +1,76 @@
+# -*- coding: utf-8 -*-
+
+#
+#   ngsv
+#   http://github.com/xcoo/ngsv
+#   Copyright (C) 2012, Xcoo, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+from sqlalchemy import Column
+from sqlalchemy import Integer, BigInteger, String, Text
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm.exc import NoResultFound
+
+Base = declarative_base()
+
+class Sam(Base):
+
+    __tablename__ = 'sam'
+
+    sam_id = Column(BigInteger, primary_key=True, autoincrement=True)
+    file_name = Column(String(1024), nullable=False)
+    created_date = Column(BigInteger, nullable=False)
+    header = Column(Text, nullable=False)
+    lengths = Column(Text, nullable=False)
+    mapped = Column(Integer, nullable=False)
+    number_of_chromosomes = Column(Integer, nullable=False)
+    chromosomes = Column(Text, nullable=False)
+
+    def __init__(self, file_name, created_data, header, lengths, mapped,
+                 number_of_chromosomes, chromosomes):
+        self.file_name = file_name
+        self.created_data = created_data
+        self.header = header
+        self.lengths = lengths
+        self.mapped = mapped
+        self.number_of_chromosomes = number_of_chromosomes
+        self.chromosomes = chromosomes
+
+    def __repr__(self): # TODO
+        if self.id == None:
+            return "<thumb('%s', '%s', '%s')>" % (self.original,
+                                                  self.created_at,
+                                                  self.updated_at)
+        else:
+            return "<thumb('%d', '%s', '%s', '%s')>" % (self.id,
+                                                        self.original,
+                                                        self.created_at,
+                                                        self.updated_at)
+
+class SamDao():
+
+    def __init__(self, engine):
+        self._engine = engine
+
+    def all(self):
+        session = scoped_session(sessionmaker(bind=self._engine))
+        query = session.query(Sam)
+        try:
+            return query.all()
+        except NoResultFound:
+            return None
+        finally:
+            session.close()
