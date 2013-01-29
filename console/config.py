@@ -34,6 +34,7 @@ class Config(object):
         self.__console_debug = conf.get('console', 'debug')
         self.__console_testing = conf.get('console', 'testing')
         self.__console_upload_dir = conf.get('console', 'upload_dir')
+        self.__console_upload_dir_url = conf.get('console', 'upload_dir_url')
 
     @property
     def db_host(self):
@@ -62,3 +63,7 @@ class Config(object):
     @property
     def upload_dir(self):
         return self.__console_upload_dir
+
+    @property
+    def upload_dir_url(self):
+        return self.__console_upload_dir_url

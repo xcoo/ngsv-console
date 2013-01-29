@@ -21,6 +21,7 @@
 
 import os
 import sys
+from urlparse import urljoin
 
 from flask import Flask
 from flask import render_template, redirect, request
@@ -143,6 +144,28 @@ def viewer():
         chrs.append({'name': chr.chromosome, 'end': end.chr_end})
     
     return render_template('viewer.html', sams=sam_dao.all(), beds=bed_dao.all(), chrs=chrs)
+
+@app.route('/download')
+def download():
+    sam_dao = SamDao(engine)
+    bed_dao = BedDao(engine)
+
+    samfiles = []
+    bedfiles = []
+
+    for sam in sam_dao.all():
+        f = {}
+        f['name'] = sam.file_name
+        f['url'] = urljoin(conf.upload_dir_url, sam.file_name)
+        samfiles.append(f)
+
+    for bed in bed_dao.all():
+        f = {}
+        f['name'] = bed.file_name
+        f['url'] = urljoin(conf.upload_dir_url, bed.file_name)
+        bedfiles.append(f)
+    
+    return render_template('download.html', samfiles=samfiles, bedfiles=bedfiles)
 
 @app.route('/help')
 def help():

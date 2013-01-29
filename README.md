@@ -2,13 +2,14 @@
 
 ## Requirements
 
-* Python
+* Python (v2.7)
     * pysam (>= v0.7)
     * Flask
     * gevent
     * gevent-websocket
     * Celery
     * MySQL-python
+    * SQLAlchemy
     * Cython
 * MySQL
 * RabbitMQ

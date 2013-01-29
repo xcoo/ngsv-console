@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-    <title>Help | NGSV Console</title>
+    <title>Download | NGSV Console</title>
 
     <link type="text/css" href="/css/bootstrap.min.css" rel="stylesheet" />
     <link type="text/css" href="/css/main.css" rel="stylesheet" />
@@ -31,8 +31,8 @@
             <ul class="nav">
               <li><a href="/">Upload</a></li>
               <li><a href="/viewer">Viewer</a></li>
-              <li><a href="/download">Download</a></li>
-              <li class="active"><a href="/help">Help</a></li>
+              <li class="active"><a href="/download">Download</a></li>
+              <li><a href="/help">Help</a></li>
             </ul>
           </div>
         </div>
@@ -40,7 +40,25 @@
     </div>
 
     <div id="main" class="container">
-      Under construction...
+      <div class="row">
+        <div class="span12">
+          <h3>Sam/Bam</h3>
+          {% for f in samfiles %}
+          <p><a href="{{ f.url }}">{{ f.name }}</a></p>
+          {% endfor %}
+          {% if not samfiles %}
+          <p class="text-warning">Not found</p>
+          {% endif %}
+
+          <h3>Bed</h3>
+          {% for f in bedfiles %}
+          <p><a href="{{ f.url }}">{{ f.name }}</a></p>
+          {% endfor %}
+          {% if not bedfiles %}
+          <p class="text-warning">Not found</p>
+          {% endif %}
+        </div>
+      </div>
     </div>
 
     {% include 'footer.html' %}
