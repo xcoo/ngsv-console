@@ -23,7 +23,7 @@ First, create database.
 
 ```
 $ cd [ngsv dir]/db
-$ mysql -u root -p < samdb.sql
+$ mysql -u root -p < ngsv.sql
 ```
 
 ### Install ngsv-tools
@@ -52,7 +52,8 @@ db_name=samdb
 debug=False
 testing=False
 
-upload_dir=upload_dir
+upload_dir=/path/upload_dir/
+upload_dir_url=http://example.com/upload_files/
 ```
 
 Start MySQL and RabbitMQ.
@@ -72,12 +73,12 @@ $ ./app.py
 
 Browse `http://localhost:5000`. And upload bam/bed files.
 
-Then, load data of the human genome.
+### Load data of human genome
 
 ```
-$ cd [ngsv dir]/console/tools
-$ python load_cytoband.py
-$ python load_refGene.py
+$ cd [ngsv dir]/tools/ngsv-tools
+$ python cytobandloader.py
+$ python refGeneloader.py
 ```
 
 ## License
