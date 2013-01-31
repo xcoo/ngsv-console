@@ -23,13 +23,10 @@ import sys
 import gzip
 
 from cache import Cache
-
 from sam.data.sql import SQLDB
 from sam.data.chromosome import Chromosome
 from sam.data.cytoband import CytoBand
-
-from config import *
-
+from config import SQLDB_HOST, SQLDB_USER, SQLDB_PASSWD, SAM_DB_NAME
 
 def _update_database(fp, cytoband_data, chromosome_data):
 

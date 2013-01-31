@@ -18,8 +18,8 @@
 # limitations under the License.
 #
 
-from tools.sam.data.samhistogram import SamHistogram
-from tools.sam.data.histogrambin import HistogramBin
+from ngsvtools.sam.data.samhistogram import SamHistogram
+from ngsvtools.sam.data.histogrambin import HistogramBin
 
 from celery import current_task
 
@@ -44,7 +44,7 @@ def pileup(samfile, chromosomes, samId, db):
     sam_hist = SamHistogram(db)
     hist_bin = HistogramBin(db)
 
-    bins = ( Bin(100), Bin(10000), Bin(1000000) )
+    bins = (Bin(100), Bin(10000), Bin(1000000))
     
     bufsize = 10000
     
@@ -88,4 +88,4 @@ def pileup(samfile, chromosomes, samId, db):
             b.sum = 0
             b.pos = 0
 
-        current_task.update_state(state='PROGRESS', meta={ 'progress': 50 + (i + 1) * 50 / len(chromosomes) })
+        current_task.update_state(state='PROGRESS', meta={'progress': 50 + (i + 1) * 50 / len(chromosomes)})

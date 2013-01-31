@@ -30,9 +30,7 @@ from sam.data.sql import SQLDB
 from sam.data.chromosome import Chromosome
 from sam.data.bed import Bed
 from sam.data.bedfragment import BedFragment
-
 from config import SQLDB_HOST, SQLDB_USER, SQLDB_PASSWD, SAM_DB_NAME
-
 from exception import AlreadyLoadedError, UnsupportedFileError
 
 
@@ -108,7 +106,7 @@ def load(filepath, db):
 
         count += 1
 
-        if count % (bedfile.length / 100) == 0:
+        if bedfile.length >= 100 and count % (bedfile.length / 100) == 0:
             current_task.update_state(state='PROGRESS', meta={ 'progress': (count + 1) * 100 / bedfile.length })
 
 #        print 'loaded %d fragments\r' % count,

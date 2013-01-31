@@ -16,14 +16,7 @@
 
 ## Installation
 
-### Setup database (NGSV Console)
-
-Compile.
-
-```
-$ cd [ngsv dir]/console/tools/cypileup
-$ python setup.py install
-```
+### Create database
 
 ngsv uses MySQL database.
 First, create database.
@@ -32,6 +25,15 @@ First, create database.
 $ cd [ngsv dir]/db
 $ mysql -u root -p < samdb.sql
 ```
+
+### Install ngsv-tools
+
+```
+$ cd [ngsv dir]/tools
+$ python setup.py install
+```
+
+### Setup database
 
 Setup configuration.
 

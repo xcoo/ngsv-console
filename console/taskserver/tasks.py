@@ -23,13 +23,11 @@ from __future__ import absolute_import
 from celery import current_task
 from celery.decorators import task
 
-import tools.load_sam
-import tools.calc_pileup
-import tools.load_bed
-
-from tools.sam.data.sql import SQLDB
-
-from tools.exception import UnsupportedFileError, AlreadyLoadedError
+import ngsvtools.samloader
+import ngsvtools.histogramloader
+import ngsvtools.bedloader
+from ngsvtools.sam.data.sql import SQLDB
+from ngsvtools.exception import UnsupportedFileError, AlreadyLoadedError
 
 # Load a sam file and calculate histograms.
 @task(name='tasks.load_sam')
@@ -41,7 +39,7 @@ def load_sam(sam_file, conf):
     alert = ''
     
     try:
-        tools.load_sam.load(sam_file, db)
+        ngsvtools.samloader.load(sam_file, db)
     except UnsupportedFileError, e:
         return { 'state': 'SUCCESS_WITH_ALERT', 'alert': e.msg };
     except AlreadyLoadedError, e:
@@ -50,7 +48,7 @@ def load_sam(sam_file, conf):
     
     current_task.update_state(state='PROGRESS', meta={ 'progress': 50 })
 
-    tools.calc_pileup.run(sam_file, db)
+    ngsvtools.histogramloader.run(sam_file, db)
 
     if sam_already_loaded:
         return { 'state': 'SUCCESS_WITH_ALERT', 'alert': alert }
@@ -64,7 +62,7 @@ def load_bed(bed_file, conf):
     db = SQLDB(conf.db_name, conf.db_host, conf.db_user, conf.db_password)
 
     try:
-        tools.load_bed.load(bed_file, db)
+        ngsvtools.bedloader.load(bed_file, db)
     except UnsupportedFileError, e:
         return { 'state': 'SUCCESS_WITH_ALERT', 'alert': e.msg };
     except AlreadyLoadedError, e:

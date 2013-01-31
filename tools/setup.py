@@ -19,7 +19,9 @@
 # limitations under the License.
 #
 
-from setuptools import setup
+from distutils.core import setup
+from distutils.extension import Extension
+from Cython.Distutils import build_ext
 
 setup(
     name='ngsv-tools',
@@ -30,5 +32,7 @@ setup(
     author_email='developer@xcoo.jp',
     url='http://github.com/xcoo/ngsv-console',
     install_requires=['pysam>=0.7'],
-    packages=['ngsv', 'ngsv.sam', 'ngsv.sam.data']
+    ext_modules=[Extension('ngsvtools.cypileup', ['ngsvtools/cypileup.pyx'])],
+    cmdclass={'build_ext': build_ext},
+    packages=['ngsvtools', 'ngsvtools.sam', 'ngsvtools.sam.data']
     )

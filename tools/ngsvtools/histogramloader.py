@@ -26,15 +26,12 @@ import time
 
 import pysam
 
-import ngsv.cypileup
-
+import cypileup
 from sam.data.sql import SQLDB
 from sam.data.sam import Sam
 from sam.data.chromosome import Chromosome
 from sam.util import trim_chromosome_name
-
 from config import SQLDB_HOST, SQLDB_USER, SQLDB_PASSWD, SAM_DB_NAME
-
 from exception import UnsupportedFileError
 
 def load(filepath, db):
@@ -85,7 +82,7 @@ def run(filepath, db):
     samId = sam['id']
 
     # cypileup
-    ngsv.cypileup.pileup(samfile, chromosomes, samId, db)
+    cypileup.pileup(samfile, chromosomes, samId, db)
 
     samfile.close()
 
