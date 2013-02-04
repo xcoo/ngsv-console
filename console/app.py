@@ -79,6 +79,10 @@ engine = create_engine(db_url, encoding='utf-8', convert_unicode=True, pool_recy
 
 @app.route('/')
 def root():
+    return render_template('main.html')
+
+@app.route('/upload')
+def upload():
     tasks = []
     
     for ti in reversed(tasks_info):
@@ -128,7 +132,7 @@ def root():
 
             tasks.append(task);
         
-    return render_template('main.html', tasks=tasks)
+    return render_template('upload.html', tasks=tasks)
 
 @app.route('/viewer')
 def viewer():
@@ -182,7 +186,7 @@ def upload_bam():
         r = load_sam.delay(sam_file, conf)
         tasks_info.append({'result': r, 'file': filename})
 
-    return redirect('/')
+    return redirect('/upload')
 
 @app.route('/api/upload-bed', methods=['POST'])
 def upload_bed():
@@ -195,7 +199,7 @@ def upload_bed():
         r = load_bed.delay(bed_file, conf)
         tasks_info.append({'result': r, 'file': filename})
         
-    return redirect('/')
+    return redirect('/upload')
 
 @app.route('/api/ws/connect')
 def ws_connect():
@@ -232,21 +236,6 @@ def ws_send_config():
                 ws_viewer_sockets[ip].send(src)
             except WebSocketError:
                 del ws_viewer_sockets[ip]
-
-    return redirect('/viewer')
-
-@app.route('/api/ws/echo')
-def ws_echo():
-    if request.environ.get('wsgi.websocket') is None:
-        return redirect('/viewer')
-
-    ws = request.environ['wsgi.websocket']
-
-    while True:
-        src = ws.receive()
-        if src is None:
-            break
-        ws.send(src)
 
     return redirect('/viewer')
 

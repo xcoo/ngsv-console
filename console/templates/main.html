@@ -29,9 +29,9 @@
           <a class="brand" href="/">NGSV Console</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-              <li class="active"><a href="/">Upload</a></li>
-              <li><a href="/viewer">Viewer</a></li>
+              <li><a href="/upload">Upload</a></li>
               <li><a href="/download">Download</a></li>
+              <li><a href="/viewer">Viewer</a></li>
               <li><a href="/help">Help</a></li>
             </ul>
           </div>
@@ -39,83 +39,35 @@
       </div>
     </div>
 
-    <div id="main" class="container">
-
-      <div class="row">
-        <div class="span12" style="margin-bottom: 10px;">
-          <button id="sam-upload-select-btn" class="btn">Upload Sam/Bam File</button>
-          <button id="bed-upload-select-btn" class="btn">Upload Bed File</button>          
+    <div id="top-nav" class="container">
+      <div class="row-fluid">
+        <div class="span6">
+          <a href="/upload"><img src="/img/navicon-upload.png"></a>
+          <h2><a href="/upload">Upload</a></h2>
+          <p>Upload Sam/Bam and Bed files. A task server loads information to database and calculates histogram automatically.</p>
+        </div>
+        <div class="span6">
+          <a href="/download"><img src="/img/navicon-download.png"></a>
+          <h2><a href="/download">Download</a></h2>
+          <p>You can download any files uploaded to the server.<br>
+            Be careful that some files are very large size (&gt; 1GB).</p>
         </div>
       </div>
-
-      <div class="row">
-        <div class="span12" id="new-task">
+      <div class="row-fluid">
+        <div class="span6">
+          <a href="/viewer"><img src="/img/navicon-viewer.png"></a>
+          <h2><a href="/viewer">Viewer</a></h2>
+          <p>Change settings of a viewer from a web browser.<br>
+            Select sam/bam, bed, chromosome and region you want see.</p>
+        </div>
+        <div class="span6">
+          <a href="/help"><img src="/img/navicon-help.png"></a>
+          <h2><a href="/help">Help</a></h2>
+          <p>May I help you?</p>
         </div>
       </div>
-
-      <div class="row">
-        <div class="span12" id="old-task">
-
-          {% for t in tasks %}
-          <div class="row">
-            <div class="span12 job">
-              {% if t.task_name == 'tasks.load_sam' %}
-
-              <h3>Loading Sam/Bam</h3>
-
-              {% if t.sam_file %}
-              <dl>
-                <dt>Sam/Bam file</dt><dd>{{ t.sam_file }}</dd>
-              </dl>
-              {% endif %}
-
-              <div class="progress progress-striped active" style="margin-top: 10px;">
-                <div class="bar" style="width: {{ t.sam_load_progress }};">{{ t.sam_load_progress }}</div>
-              </div>
-
-              {% if t.alert %}
-              <div class="alert">
-                {{ t.alert }}
-              </div>
-              {% endif %}
-
-              {% endif %}
-
-              {% if t.task_name == 'tasks.load_bed' %}
-
-              <h3>Loading Bed</h3>
-
-              {% if t.bed_file %}
-              <dl>
-                <dt>Bed file</dt><dd>{{ t.bed_file }}</dd>
-              </dl>
-              {% endif %}
-
-              <div class="progress progress-striped active" style="margin-top: 10px;">
-                <div class="bar" style="width: {{ t.bed_load_progress }};">{{ t.bed_load_progress }}</div>
-              </div>
-
-              {% if t.alert %}
-              <div class="alert">
-                {{ t.alert }}
-              </div>
-              {% endif %}
-
-              {% endif %}
-            </div>
-          </div>
-          {% endfor %}
-
-        </div>
-      </div>
-
     </div>
 
     {% include 'footer.html' %}
-
-    <script type="text/javascript" src="/js/jquery.min.js"></script>
-    <script type="text/javascript" src="/js/format4js.js"></script>
-    <script type="text/javascript" src="/js/uploader.js"></script>
-    <script type="text/javascript" src="/js/console-uploader.js"></script>
   </body>
 </html>

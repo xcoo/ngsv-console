@@ -12,7 +12,26 @@ body {
   padding-bottom: 60px;
 }
 
-/* main */
+#top-nav {
+  padding-top: 35px;
+  text-align: center;
+}
+
+#top-nav .row-fluid {
+  margin-top: 45px;
+}
+
+#top-nav .row-fluid:first-child {
+  margin-top: 0;
+}
+
+#top-nav a {
+  color: black;
+}
+
+#top-nav a:hover {
+  text-decoration: none;
+}
 
 #main .job {
   margin-bottom: 10px;
