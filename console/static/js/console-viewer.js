@@ -30,14 +30,14 @@ jQuery.extend({
     console.viewer.ws = undefined;
 
     console.viewer.main = function() {
-        console.viewer.ws = new WebSocket('ws://127.0.0.1:5000/api/ws/send-config')
+        console.viewer.ws = new WebSocket('ws://' + HOSTNAME + ':5000/api/ws/send-config')
 
         $('#viewer-select-btn').click(function() {
             var data = {'bam': [], 'bed': [], 'chromosome': {}};
 
             $('input:checked').each(function() {
                 if ($(this).attr('type') == 'checkbox') {
-                    if ($(this).attr('name') == 'bam') {
+                    if ($(this).attr('name') == 'sam') {
                         data.bam.push({
                             'name': $(this).attr('name'),
                             'id': $(this).val()

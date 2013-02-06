@@ -147,7 +147,7 @@ def viewer():
         chr = chromosome_dao.get_by_id(chr_id)
         chrs.append({'name': chr.chromosome, 'end': end.chr_end})
     
-    return render_template('viewer.html', sams=sam_dao.all(), beds=bed_dao.all(), chrs=chrs)
+    return render_template('viewer.html', sams=sam_dao.all(), beds=bed_dao.all(), chrs=chrs, hostname=conf.host)
 
 @app.route('/download')
 def download():
