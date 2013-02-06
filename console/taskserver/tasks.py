@@ -31,9 +31,9 @@ from ngsvtools.exception import UnsupportedFileError, AlreadyLoadedError
 
 # Load a sam file and calculate histograms.
 @task(name='tasks.load_sam')
-def load_sam(sam_file, conf):
+def load_sam(sam_file, db_name, db_host, db_user, db_password):
     current_task.update_state(state='STARTED')
-    db = SQLDB(conf.db_name, conf.db_host, conf.db_user, conf.db_password)
+    db = SQLDB(db_name, db_host, db_user, db_password)
 
     sam_already_loaded = False
     alert = ''
@@ -57,9 +57,9 @@ def load_sam(sam_file, conf):
 
 # Load a bed file.
 @task(name='tasks.load_bed')
-def load_bed(bed_file, conf):
+def load_bed(bed_file, db_name, db_host, db_user, db_password):
     current_task.update_state(state='STARTED')
-    db = SQLDB(conf.db_name, conf.db_host, conf.db_user, conf.db_password)
+    db = SQLDB(db_name, db_host, db_user, db_password)
 
     try:
         ngsvtools.bedloader.load(bed_file, db)

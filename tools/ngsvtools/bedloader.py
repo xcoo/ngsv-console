@@ -30,7 +30,7 @@ from sam.data.sql import SQLDB
 from sam.data.chromosome import Chromosome
 from sam.data.bed import Bed
 from sam.data.bedfragment import BedFragment
-from config import SQLDB_HOST, SQLDB_USER, SQLDB_PASSWD, SAM_DB_NAME
+from ngsvtools.config import SQLDB_HOST, SQLDB_USER, SQLDB_PASSWD, SAM_DB_NAME
 from exception import AlreadyLoadedError, UnsupportedFileError
 
 

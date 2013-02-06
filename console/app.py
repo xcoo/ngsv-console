@@ -183,7 +183,7 @@ def upload_bam():
         sam_file = os.path.join(conf.upload_dir, filename)
         f.save(sam_file)
 
-        r = load_sam.delay(sam_file, conf)
+        r = load_sam.delay(sam_file, conf.db_name, conf.db_host, conf.db_user, conf.db_password)
         tasks_info.append({'result': r, 'file': filename})
 
     return redirect('/upload')
@@ -196,7 +196,7 @@ def upload_bed():
         bed_file = os.path.join(conf.upload_dir, filename) 
         f.save(bed_file)
 
-        r = load_bed.delay(bed_file, conf)
+        r = load_bed.delay(bed_file, conf.db_name, conf.db_host, conf.db_user, conf.db_password)
         tasks_info.append({'result': r, 'file': filename})
         
     return redirect('/upload')
