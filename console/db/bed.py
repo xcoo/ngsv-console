@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 #
-#   ngsv
-#   http://github.com/xcoo/ngsv
+#   ngsv-console
+#   http://github.com/xcoo/ngsv-console
 #   Copyright (C) 2012, Xcoo, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,6 +26,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 Base = declarative_base()
 
+
 class Bed(Base):
 
     __tablename__ = 'bed'
@@ -38,7 +39,8 @@ class Bed(Base):
     visibility = Column(Integer, nullable=False)
     item_rgb = Column(Integer, nullable=False)
 
-    def __init__(self, file_name, created_data, track_name, description, visibility, item_rgb):
+    def __init__(self, file_name, created_data, track_name, description,
+                 visibility, item_rgb):
         self.file_name = file_name
         self.created_data = created_data
         self.track_name = track_name
@@ -46,8 +48,8 @@ class Bed(Base):
         self.visibility = visibility
         self.item_rgb = item_rgb
 
-    def __repr__(self): # TODO
-        if self.id == None:
+    def __repr__(self):  # TODO
+        if self.id is None:
             return "<thumb('%s', '%s', '%s')>" % (self.original,
                                                   self.created_at,
                                                   self.updated_at)
@@ -56,6 +58,7 @@ class Bed(Base):
                                                         self.original,
                                                         self.created_at,
                                                         self.updated_at)
+
 
 class BedDao():
 

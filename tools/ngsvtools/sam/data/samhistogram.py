@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 #
-#   ngsv
-#   http://github.com/xcoo/ngsv
+#   ngsv-console
+#   http://github.com/xcoo/ngsv-console
 #   Copyright (C) 2012, Xcoo, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,7 +27,6 @@ class SamHistogram:
 
         self.db = db
 
-
     def get_by_samid(self, samId):
 
         sql = u"SELECT sam_id, binsize, sam_histogram_id FROM sam_histogram WHERE sam_id = '%d' ORDER BY created_date DESC LIMIT 1" % samId
@@ -41,7 +40,6 @@ class SamHistogram:
         else:
             return None
 
-
     def get_by_samid_binSize(self, samId, binSize):
 
         sql = u"SELECT sam_id, binsize, sam_histogram_id FROM sam_histogram WHERE sam_id = '%d' AND binsize = '%d' ORDER BY created_date DESC LIMIT 1" % (samId, binSize)
@@ -54,8 +52,6 @@ class SamHistogram:
                     'hist_id': result[0][2]}
         else:
             return None
-
-
 
     def append(self, samId, binSize):
 

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 #
-#   ngsv
-#   http://github.com/xcoo/ngsv
+#   ngsv-console
+#   http://github.com/xcoo/ngsv-console
 #   Copyright (C) 2012, Xcoo, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,6 +26,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 Base = declarative_base()
 
+
 class Chromosome(Base):
 
     __tablename__ = 'chromosome'
@@ -37,10 +38,11 @@ class Chromosome(Base):
         self.chromosome = chromosome
 
     def __repr__(self):
-        if self.chr_id == None:
+        if self.chr_id is None:
             return '<chromosome("%s")>' % self.chromosome
         else:
             return '<chromosome("%d", "%s")>' % (self.chr_id, self.chromosome)
+
 
 class ChromosomeDao():
 
@@ -56,7 +58,7 @@ class ChromosomeDao():
             return None
         finally:
             session.close()
-        
+
     def get_by_id(self, chr_id):
         session = scoped_session(sessionmaker(bind=self._engine))
         query = session.query(Chromosome).filter(Chromosome.chr_id==chr_id)

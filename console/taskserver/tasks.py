@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 #
-#   ngsv
-#   http://github.com/xcoo/ngsv
+#   ngsv-console
+#   http://github.com/xcoo/ngsv-console
 #   Copyright (C) 2012, Xcoo, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,6 +29,7 @@ import ngsvtools.bedloader
 from ngsvtools.sam.data.sql import SQLDB
 from ngsvtools.exception import UnsupportedFileError, AlreadyLoadedError
 
+
 # Load a sam file and calculate histograms.
 @task(name='tasks.load_sam')
 def load_sam(sam_file, db_name, db_host, db_user, db_password):
@@ -37,23 +38,24 @@ def load_sam(sam_file, db_name, db_host, db_user, db_password):
 
     sam_already_loaded = False
     alert = ''
-    
+
     try:
         ngsvtools.samloader.load(sam_file, db)
     except UnsupportedFileError, e:
-        return { 'state': 'SUCCESS_WITH_ALERT', 'alert': e.msg };
+        return {'state': 'SUCCESS_WITH_ALERT', 'alert': e.msg}
     except AlreadyLoadedError, e:
         sam_already_loaded = True
         alert = e.msg
-    
-    current_task.update_state(state='PROGRESS', meta={ 'progress': 50 })
+
+    current_task.update_state(state='PROGRESS', meta={'progress': 50})
 
     ngsvtools.histogramloader.run(sam_file, db)
 
     if sam_already_loaded:
-        return { 'state': 'SUCCESS_WITH_ALERT', 'alert': alert }
-    
-    return { 'state': 'SUCCESS' }
+        return {'state': 'SUCCESS_WITH_ALERT', 'alert': alert}
+
+    return {'state': 'SUCCESS'}
+
 
 # Load a bed file.
 @task(name='tasks.load_bed')
@@ -64,8 +66,8 @@ def load_bed(bed_file, db_name, db_host, db_user, db_password):
     try:
         ngsvtools.bedloader.load(bed_file, db)
     except UnsupportedFileError, e:
-        return { 'state': 'SUCCESS_WITH_ALERT', 'alert': e.msg };
+        return {'state': 'SUCCESS_WITH_ALERT', 'alert': e.msg}
     except AlreadyLoadedError, e:
-        return { 'state': 'SUCCESS_WITH_ALERT', 'alert': e.msg };
+        return {'state': 'SUCCESS_WITH_ALERT', 'alert': e.msg}
 
-    return { 'state': 'SUCCESS' }
+    return {'state': 'SUCCESS'}

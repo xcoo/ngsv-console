@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 #
-#   ngsv
-#   http://github.com/xcoo/ngsv
+#   ngsv-console
+#   http://github.com/xcoo/ngsv-console
 #   Copyright (C) 2012, Xcoo, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,13 +18,16 @@
 # limitations under the License.
 #
 
+
 class Error(Exception):
     pass
+
 
 class UnsupportedFileError(Error):
 
     def __init__(self, msg):
         self.msg = msg
+
 
 class AlreadyLoadedError(Error):
 
