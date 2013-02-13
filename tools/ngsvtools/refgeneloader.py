@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 #
-#   ngsv
-#   http://github.com/xcoo/ngsv
+#   ngsv-console
+#   http://github.com/xcoo/ngsv-console
 #   Copyright (C) 2012, Xcoo, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,6 +27,7 @@ from sam.data.sql import SQLDB
 from sam.data.chromosome import Chromosome
 from sam.data.refgene import RefGene
 from config import SQLDB_HOST, SQLDB_USER, SQLDB_PASSWD, SAM_DB_NAME
+
 
 def _update_database(fp, refgene_data, chromosome_data):
 
@@ -92,10 +93,7 @@ def _update_database(fp, refgene_data, chromosome_data):
     print "loaded %d refGenes" % count
 
 
-def load():
-
-    db = SQLDB(SAM_DB_NAME, SQLDB_HOST, SQLDB_USER, SQLDB_PASSWD)
-
+def load(db):
     refgene_data = RefGene(db)
     chromosome_data = Chromosome(db)
 
@@ -119,5 +117,9 @@ def load():
     f.close()
 
 
+def main():
+    db = SQLDB(SAM_DB_NAME, SQLDB_HOST, SQLDB_USER, SQLDB_PASSWD)
+    load(db)
+
 if __name__ == '__main__':
-    load()
+    main()

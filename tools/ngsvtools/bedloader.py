@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 #
-#   ngsv
-#   http://github.com/xcoo/ngsv
+#   ngsv-console
+#   http://github.com/xcoo/ngsv-console
 #   Copyright (C) 2012, Xcoo, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -107,7 +107,9 @@ def load(filepath, db):
         count += 1
 
         if bedfile.length >= 100 and count % (bedfile.length / 100) == 0:
-            current_task.update_state(state='PROGRESS', meta={ 'progress': (count + 1) * 100 / bedfile.length })
+            current_task.update_state(
+                state='PROGRESS',
+                meta={'progress': (count + 1) * 100 / bedfile.length})
 
 #        print 'loaded %d fragments\r' % count,
 

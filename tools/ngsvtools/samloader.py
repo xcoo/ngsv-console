@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 #
-#   ngsv
-#   http://github.com/xcoo/ngsv
+#   ngsv-console
+#   http://github.com/xcoo/ngsv-console
 #   Copyright (C) 2012, Xcoo, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,8 +32,8 @@ from sam.util import trim_chromosome_name
 from ngsvtools.config import SQLDB_HOST, SQLDB_USER, SQLDB_PASSWD, SAM_DB_NAME
 from exception import AlreadyLoadedError, UnsupportedFileError
 
+
 def load(filepath, db):
-    
     filename = os.path.basename(filepath)
     base, ext = os.path.splitext(filepath)
     if not re.match('^\.(sam|bam)', ext):
@@ -54,13 +54,13 @@ def load(filepath, db):
         outbam = pysam.Samfile(filepath, 'wb', template=insam)
         for s in insam:
             outbam.write(s)
-    
+
     # Create index if not exist
     bai = filepath + '.bai'
     if not os.path.isfile(bai):
         print 'Create index "%s"' % os.path.basename(bai)
         pysam.index(filepath)
-    
+
     # load sam
     samfile = pysam.Samfile(filepath)
     sam_data.append(filename,
@@ -74,8 +74,8 @@ def load(filepath, db):
 
     return
 
-def main():
 
+def main():
     if len(sys.argv) < 2:
         print("No input files")
         sys.exit()
@@ -86,6 +86,7 @@ def main():
 
     for f in files:
         load(f, db)
+
 
 if __name__ == '__main__':
     main()

@@ -1,0 +1,89 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+#
+#   ngsv-console
+#   http://github.com/xcoo/ngsv-console
+#   Copyright (C) 2013, Xcoo, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+__author__ = 'Xcoo, Inc.'
+
+import argparse
+
+import ngsvtools.samloader
+import ngsvtools.bedloader
+import ngsvtools.cytobandloader
+import ngsvtools.refgeneloader
+from ngsvtools.sam.data.sql import SQLDB
+
+
+def loadsam(args):
+    db = SQLDB(args.dbname, args.dbhost, args.dbuser, args.dbpassword)
+    for f in args.samfile:
+        ngsvtools.samloader.load(f, db)
+
+
+def loadbed(args):
+    db = SQLDB(args.dbname, args.dbhost, args.dbuser, args.dbpassword)
+    for f in args.bedfile:
+        ngsvtools.bedloader.load(f, db)
+
+
+def loadcytoband(args):
+    db = SQLDB(args.dbname, args.dbhost, args.dbuser, args.dbpassword)
+    ngsvtools.cytobandloader.load(db)
+
+
+def loadrefgene(args):
+    db = SQLDB(args.dbname, args.dbhost, args.dbuser, args.dbpassword)
+    ngsvtools.refgeneloader.load(db)
+
+
+def add_db_arguments(parser):
+    parser.add_argument('--dbhost', default='127.0.0.1',
+                        help="Host of MySQL server (default: '127.0.0.1')")
+    parser.add_argument('--dbuser', default='root',
+                        help="User of MySQL server (default: 'root')")
+    parser.add_argument('--dbpassword', default='password',
+                        help="Password of MySQL server (default: 'password')")
+    parser.add_argument('--dbname', default='ngsv',
+                        help="Database name (default: 'ngsv')")
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers(help='Specify method')
+
+    parser_sam = subparsers.add_parser('loadsam', help='Load sam/bam file')
+    add_db_arguments(parser_sam)
+    parser_sam.add_argument('samfile', nargs='+', help='sam/bam files')
+    parser_sam.set_defaults(func=loadsam)
+
+    parser_bed = subparsers.add_parser('loadbed', help='Load bed file')
+    add_db_arguments(parser_bed)
+    parser_bed.add_argument('bedfile', nargs='+', help='bed files')
+    parser_bed.set_defaults(func=loadbed)
+
+    parser_cytoband = subparsers.add_parser('loadcytoband',
+                                            help='Load cytoband')
+    add_db_arguments(parser_cytoband)
+    parser_cytoband.set_defaults(func=loadcytoband)
+
+    parser_refgene = subparsers.add_parser('loadrefgene', help='Load refgene')
+    add_db_arguments(parser_refgene)
+    parser_refgene.set_defaults(func=loadrefgene)
+
+    args = parser.parse_args()
+    args.func(args)

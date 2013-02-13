@@ -31,8 +31,8 @@ setup(
     author='Xcoo, Inc.',
     author_email='developer@xcoo.jp',
     url='http://github.com/xcoo/ngsv-console',
-    install_requires=['pysam>=0.7'],
+    requires=['pysam (>=0.7)'],
     ext_modules=[Extension('ngsvtools.cypileup', ['ngsvtools/cypileup.pyx'])],
     cmdclass={'build_ext': build_ext},
-    packages=['ngsvtools', 'ngsvtools.sam', 'ngsvtools.sam.data']
-    )
+    scripts=['scripts/ngsv'],
+    packages=['ngsvtools', 'ngsvtools.sam', 'ngsvtools.sam.data'])
