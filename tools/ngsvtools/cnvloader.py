@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 #
-#   ngsv
-#   http://github.com/xcoo/ngsv
-#   Copyright (C) 2012, Xcoo, Inc.
+#   ngsv-console
+#   http://github.com/xcoo/ngsv-console
+#   Copyright (C) 2013, Xcoo, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ from ngsvtools.sam.util import trim_chromosome_name
 from ngsvtools.config import SQLDB_HOST, SQLDB_USER, SQLDB_PASSWD, SAM_DB_NAME
 
 
-def load_cnv(filepath, db):
+def load(filepath, db):
     cnv_data = Cnv(db)
     chromosome_data = Chromosome(db)
 
@@ -61,7 +61,7 @@ def load_cnv(filepath, db):
             r = re.compile('numsnp=(\w+)')
             m = r.search(row[1])
             numsnp = long(m.group(1))
-            
+
             r = re.compile('length=(\w+)')
             m = r.search(row[2])
             length = m.group(1)
@@ -85,7 +85,7 @@ def load_cnv(filepath, db):
             cnv_data.append(filename, chr_id, chr_start, chr_end, length,
                             state, copy_number, numsnp, startsnp, endsnp)
             cnt += 1
-            
+
         line_count += 1
 
     logging.info('read lines: %d' % line_count)
@@ -102,7 +102,7 @@ def main():
 
     db = SQLDB(SAM_DB_NAME, SQLDB_HOST, SQLDB_USER, SQLDB_PASSWD)
 
-    load_cnv(filepath, db)
-    
+    load(filepath, db)
+
 if __name__ == '__main__':
     main()

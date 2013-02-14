@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 #
-#   ngsv
-#   http://github.com/xcoo/ngsv
-#   Copyright (C) 2012, Xcoo, Inc.
+#   ngsv-console
+#   http://github.com/xcoo/ngsv-console
+#   Copyright (C) 2013, Xcoo, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 # limitations under the License.
 #
 
+
 class Cnv:
 
     def __init__(self, db):
@@ -25,10 +26,7 @@ class Cnv:
 
     def append(self, filename, chr_id, chr_start, chr_end, lengths, state,
                copy_number, num_snp, snp_start, snp_end):
-
-        SQL_TEMPLATE = u"INSERT INTO cnv " \
-                       u"(file_name, chr_id, chr_start, chr_end, lengths, state, copy_number, num_snp, snp_start, snp_end) " \
-                       u"VALUES ('%s', %d, %d, %d, '%s', '%s', %d, %d, '%s','%s')"
+        SQL_TEMPLATE = u"INSERT INTO cnv (file_name, chr_id, chr_start, chr_end, lengths, state, copy_number, num_snp, snp_start, snp_end) VALUES ('%s', %d, %d, %d, '%s', '%s', %d, %d, '%s','%s')"
 
         sql = SQL_TEMPLATE % (filename,
                               chr_id,
@@ -40,6 +38,5 @@ class Cnv:
                               num_snp,
                               snp_start,
                               snp_end)
-        print sql
 
         self.db.execute(sql)

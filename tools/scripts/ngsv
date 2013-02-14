@@ -31,6 +31,7 @@ import ngsvtools.histogramloader
 import ngsvtools.bedloader
 import ngsvtools.cytobandloader
 import ngsvtools.refgeneloader
+import ngsvtools.cnvloader
 from ngsvtools.sam.data.sql import SQLDB
 
 
@@ -72,6 +73,12 @@ def loadrefgene(args):
     ngsvtools.refgeneloader.load(db)
 
 
+def loadcnv(args):
+    db = SQLDB(args.dbname, args.dbhost, args.dbuser, args.dbpassword)
+    for f in args.cnvfile:
+        ngsvtools.cnvloader.load(f, db)
+
+
 def add_db_arguments(parser):
     parser.add_argument('--dbhost', default='127.0.0.1',
                         help="Host of MySQL server (default: '127.0.0.1')")
@@ -108,6 +115,11 @@ if __name__ == '__main__':
     parser_refgene = subparsers.add_parser('loadrefgene', help='Load refgene')
     add_db_arguments(parser_refgene)
     parser_refgene.set_defaults(func=loadrefgene)
+
+    parser_cnv = subparsers.add_parser('loadcnv', help='load cnv file')
+    add_db_arguments(parser_cnv)
+    parser_cnv.add_argument('cnvfile', nargs='+', help='cnv files')
+    parser_cnv.set_defaults(func=loadcnv)
 
     args = parser.parse_args()
     args.func(args)
