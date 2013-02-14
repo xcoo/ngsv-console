@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 #
-#   ngsv
-#   http://github.com/xcoo/ngsv
+#   ngsv-console
+#   http://github.com/xcoo/ngsv-console
 #   Copyright (C) 2012, Xcoo, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,9 +19,14 @@
 # limitations under the License.
 #
 
-from distutils.core import setup
+from setuptools import setup
 from distutils.extension import Extension
-from Cython.Distutils import build_ext
+
+# Require for setuptools_cython
+import sys
+if 'setuptools.extension' in sys.modules:
+    m = sys.modules['setuptools.extension']
+    m.Extension.__dict__ = m._Extension.__dict__
 
 setup(
     name='ngsv-tools',
@@ -31,8 +36,9 @@ setup(
     author='Xcoo, Inc.',
     author_email='developer@xcoo.jp',
     url='http://github.com/xcoo/ngsv-console',
-    install_requires=['pysam>=0.7'],
+    setup_requires=['setuptools_cython'],
+    install_requires=['pysam>=0.7', 'MySQL-python', 'celery'],
     ext_modules=[Extension('ngsvtools.cypileup', ['ngsvtools/cypileup.pyx'])],
-    cmdclass={'build_ext': build_ext},
-    packages=['ngsvtools', 'ngsvtools.sam', 'ngsvtools.sam.data']
-    )
+    scripts=['scripts/ngsv'],
+    packages=['ngsvtools', 'ngsvtools.sam', 'ngsvtools.sam.data'],
+    package_data={'ngsvtools': ['data/ngsv.sql']})

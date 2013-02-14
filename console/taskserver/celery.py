@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 #
-#   ngsv
-#   http://github.com/xcoo/ngsv
+#   ngsv-console
+#   http://github.com/xcoo/ngsv-console
 #   Copyright (C) 2012, Xcoo, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,7 +26,6 @@ from celery import Celery
 celery = Celery('taskserver.celery', include=['taskserver.tasks'])
 
 celery.config_from_object('celeryconfig')
-
 
 if __name__ == '__main__':
     celery.start()

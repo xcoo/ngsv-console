@@ -54,6 +54,8 @@ testing=False
 
 upload_dir=/path/upload_dir/
 upload_dir_url=http://example.com/upload_files/
+
+host=example.com
 ```
 
 Start MySQL and RabbitMQ.
@@ -68,17 +70,18 @@ $ celery worker --app=taskserver -l info
 Start web server
 
 ```
-$ ./app.py
+$ ./app.py --wsgi
 ```
 
 Browse `http://localhost:5000`. And upload bam/bed files.
 
 ### Load data of human genome
 
+Load cytobands and refgenes to MySQL database by the following commandline ngsvtools.
+
 ```
-$ cd [ngsv dir]/tools/ngsv-tools
-$ python cytobandloader.py
-$ python refGeneloader.py
+$ ngsv loadcytoband [--dbuser USER] [--dbpassword PASSWORD]
+$ ngsv loadrefgene [--dbuser USER] [--dbpassword PASSWORD]
 ```
 
 ## License

@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 #
-#   ngsv
-#   http://github.com/xcoo/ngsv
+#   ngsv-console
+#   http://github.com/xcoo/ngsv-console
 #   Copyright (C) 2012, Xcoo, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -55,39 +55,46 @@ conf = Config(ini)
 app.debug = conf.debug
 app.testing = conf.testing
 
-app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {
-        '/': os.path.join(os.path.dirname(__file__), 'static')
-        })
+app.wsgi_app = SharedDataMiddleware(
+    app.wsgi_app,
+    {'/': os.path.join(os.path.dirname(__file__), 'static')})
 
 tasks_info = []
 ws_viewer_sockets = {}
 
+
 def list_active_task():
     i = inspect()
     active = i.active()
-    if active != None:
+    if active is not None:
         for v in active.values():
             for t in v:
                 r = BaseAsyncResult(t['id'])
                 r.task_name = t['name']
-                tasks_info.append({ 'result': r })
+                tasks_info.append({'result': r})
 
 list_active_task()
 
-db_url = 'mysql://%s:%s@%s/%s?charset=utf8' % (conf.db_user, conf.db_password, conf.db_host, conf.db_name)
-engine = create_engine(db_url, encoding='utf-8', convert_unicode=True, pool_recycle=3600)
+db_url = 'mysql://%s:%s@%s/%s?charset=utf8' % (conf.db_user,
+                                               conf.db_password,
+                                               conf.db_host,
+                                               conf.db_name)
+engine = create_engine(db_url, encoding='utf-8',
+                       convert_unicode=True, pool_recycle=3600)
+
 
 @app.route('/')
 def root():
     return render_template('main.html')
 
+
 @app.route('/upload')
 def upload():
     tasks = []
-    
+
     for ti in reversed(tasks_info):
-        r = ti['result']        
-        
+        r = ti['result']
+
         if r.task_name == 'tasks.load_sam':
             task = {
                 'task_id': r.id,
@@ -95,11 +102,11 @@ def upload():
                 'sam_load_progress': 0
                 }
 
-            if 'file' in ti and ti['file'] != None:
+            if 'file' in ti and ti['file'] is not None:
                 task['sam_file'] = ti['file']
-            
+
             if r.status == 'PROGRESS':
-                task['sam_load_progress'] =  str(r.result['progress']) + '%'
+                task['sam_load_progress'] = str(r.result['progress']) + '%'
             if r.status == 'SUCCESS':
                 task['sam_load_progress'] = '100%'
                 if r.result['state'] == 'SUCCESS_WITH_ALERT':
@@ -108,8 +115,8 @@ def upload():
                 task['sam_load_progress'] = '100%'
                 task['alert'] = 'FAILURE'
 
-            tasks.append(task);
-                
+            tasks.append(task)
+
         if r.task_name == 'tasks.load_bed':
             task = {
                 'task_id': r.id,
@@ -117,11 +124,11 @@ def upload():
                 'bed_load_progress': 0
                 }
 
-            if 'file' in ti and ti['file'] != None:
+            if 'file' in ti and ti['file'] is not None:
                 task['bed_file'] = ti['file']
 
             if r.status == 'PROGRESS':
-                task['bed_load_progress'] =  str(r.result['progress']) + '%'
+                task['bed_load_progress'] = str(r.result['progress']) + '%'
             if r.status == 'SUCCESS':
                 task['bed_load_progress'] = '100%'
                 if r.result['state'] == 'SUCCESS_WITH_ALERT':
@@ -130,9 +137,10 @@ def upload():
                 task['bed_load_progress'] = '100%'
                 task['alert'] = 'FAILURE'
 
-            tasks.append(task);
-        
+            tasks.append(task)
+
     return render_template('upload.html', tasks=tasks)
+
 
 @app.route('/viewer')
 def viewer():
@@ -146,8 +154,13 @@ def viewer():
         end = cytoband_dao.get_end_by_chr_id(chr_id)
         chr = chromosome_dao.get_by_id(chr_id)
         chrs.append({'name': chr.chromosome, 'end': end.chr_end})
-    
-    return render_template('viewer.html', sams=sam_dao.all(), beds=bed_dao.all(), chrs=chrs, hostname=conf.host)
+
+    return render_template('viewer.html',
+                           sams=sam_dao.all(),
+                           beds=bed_dao.all(),
+                           chrs=chrs,
+                           hostname=conf.host)
+
 
 @app.route('/download')
 def download():
@@ -168,12 +181,16 @@ def download():
         f['name'] = bed.file_name
         f['url'] = urljoin(conf.upload_dir_url, bed.file_name)
         bedfiles.append(f)
-    
-    return render_template('download.html', samfiles=samfiles, bedfiles=bedfiles)
+
+    return render_template('download.html',
+                           samfiles=samfiles,
+                           bedfiles=bedfiles)
+
 
 @app.route('/help')
 def help():
     return render_template('help.html')
+
 
 @app.route('/api/upload-sam', methods=['POST'])
 def upload_bam():
@@ -183,23 +200,33 @@ def upload_bam():
         sam_file = os.path.join(conf.upload_dir, filename)
         f.save(sam_file)
 
-        r = load_sam.delay(sam_file, conf.db_name, conf.db_host, conf.db_user, conf.db_password)
+        r = load_sam.delay(sam_file,
+                           conf.db_name,
+                           conf.db_host,
+                           conf.db_user,
+                           conf.db_password)
         tasks_info.append({'result': r, 'file': filename})
 
     return redirect('/upload')
+
 
 @app.route('/api/upload-bed', methods=['POST'])
 def upload_bed():
     f = request.files['file']
     if f and allowed_file(f.filename, ['bed']):
         filename = secure_filename(f.filename)
-        bed_file = os.path.join(conf.upload_dir, filename) 
+        bed_file = os.path.join(conf.upload_dir, filename)
         f.save(bed_file)
 
-        r = load_bed.delay(bed_file, conf.db_name, conf.db_host, conf.db_user, conf.db_password)
+        r = load_bed.delay(bed_file,
+                           conf.db_name,
+                           conf.db_host,
+                           conf.db_user,
+                           conf.db_password)
         tasks_info.append({'result': r, 'file': filename})
-        
+
     return redirect('/upload')
+
 
 @app.route('/api/ws/connect')
 def ws_connect():
@@ -217,6 +244,7 @@ def ws_connect():
             break
 
     return redirect('/viewer')
+
 
 @app.route('/api/ws/send-config')
 def ws_send_config():
@@ -239,9 +267,11 @@ def ws_send_config():
 
     return redirect('/viewer')
 
+
 def allowed_file(filename, extensions):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in extensions
+
 
 def run():
     if len(sys.argv) == 2 and sys.argv[1] == '--wsgi':
@@ -252,8 +282,10 @@ Websocket: Enable
 
 Run "$ python app.py" if you want to use Debug/Testing mode
 '''
-        server = pywsgi.WSGIServer(('', 5000), app, handler_class=WebSocketHandler)
-        server.serve_forever()        
+        server = pywsgi.WSGIServer(('', 5000),
+                                   app,
+                                   handler_class=WebSocketHandler)
+        server.serve_forever()
     else:
         print '''\
 Debug: Enable
@@ -263,6 +295,6 @@ Websocket: Disable
 Run "$ python app.py --wsgi" if you want to use websocket
 '''
         app.run(host='0.0.0.0')
-    
+
 if __name__ == '__main__':
     run()

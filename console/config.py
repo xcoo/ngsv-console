@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 #
-#   ngsv
-#   http://github.com/xcoo/ngsv
+#   ngsv-console
+#   http://github.com/xcoo/ngsv-console
 #   Copyright (C) 2012, Xcoo, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@
 #
 
 import ConfigParser
+
 
 class Config(object):
 
@@ -40,7 +41,7 @@ class Config(object):
     @property
     def db_host(self):
         return self.__db_host
-    
+
     @property
     def db_user(self):
         return self.__db_user
@@ -52,7 +53,7 @@ class Config(object):
     @property
     def db_name(self):
         return self.__db_name
-    
+
     @property
     def debug(self):
         return self.__console_debug

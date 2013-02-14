@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 #
-#   ngsv
-#   http://github.com/xcoo/ngsv
+#   ngsv-console
+#   http://github.com/xcoo/ngsv-console
 #   Copyright (C) 2012, Xcoo, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,14 +42,13 @@ class Sam:
             return None
 
     def get_all(self):
-        
+
         sql = u"SELECT sam_id FROM sam"
         result = self.db.execute(sql)
         if len(result) > 0:
             return result
         else:
             return None
-
 
     def append(self, filename,
                header, lengths, mapped, nreferences, references):

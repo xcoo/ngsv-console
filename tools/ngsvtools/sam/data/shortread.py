@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
+
 #
-#   ngsv
-#   http://github.com/xcoo/ngsv
+#   ngsv-console
+#   http://github.com/xcoo/ngsv-console
 #   Copyright (C) 2012, Xcoo, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +17,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-# -*- coding: utf-8 -*-
 
 from sql import *
 
@@ -51,7 +51,6 @@ class ShortRead:
 
         self.db.execute(sql, fetch_length=0)
 
-
     def count(self, samId, chrId, start, end):
 
 ## simple count
@@ -77,7 +76,6 @@ class ShortRead:
             return result[0][0]
         else:
             return None
-
 
     def max(self, samId, chrId):
 

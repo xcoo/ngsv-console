@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 #
-#   ngsv
-#   http://github.com/xcoo/ngsv
+#   ngsv-console
+#   http://github.com/xcoo/ngsv-console
 #   Copyright (C) 2012, Xcoo, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +25,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
 
 Base = declarative_base()
+
 
 class Sam(Base):
 
@@ -49,8 +50,8 @@ class Sam(Base):
         self.number_of_chromosomes = number_of_chromosomes
         self.chromosomes = chromosomes
 
-    def __repr__(self): # TODO
-        if self.id == None:
+    def __repr__(self):  # TODO
+        if self.id is None:
             return "<thumb('%s', '%s', '%s')>" % (self.original,
                                                   self.created_at,
                                                   self.updated_at)
@@ -59,6 +60,7 @@ class Sam(Base):
                                                         self.original,
                                                         self.created_at,
                                                         self.updated_at)
+
 
 class SamDao():
 

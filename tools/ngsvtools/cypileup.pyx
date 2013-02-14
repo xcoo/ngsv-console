@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 #
-#   ngsv
-#   http://github.com/xcoo/ngsv
+#   ngsv-console
+#   http://github.com/xcoo/ngsv-console
 #   Copyright (C) 2012, Xcoo, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,6 +17,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+from types import NoneType
 
 from ngsvtools.sam.data.samhistogram import SamHistogram
 from ngsvtools.sam.data.histogrambin import HistogramBin
@@ -88,4 +90,5 @@ def pileup(samfile, chromosomes, samId, db):
             b.sum = 0
             b.pos = 0
 
-        current_task.update_state(state='PROGRESS', meta={'progress': 50 + (i + 1) * 50 / len(chromosomes)})
+        if not isinstance(current_task, NoneType):
+            current_task.update_state(state='PROGRESS', meta={'progress': 50 + (i + 1) * 50 / len(chromosomes)})

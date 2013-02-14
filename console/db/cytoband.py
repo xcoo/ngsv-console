@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 #
-#   ngsv
-#   http://github.com/xcoo/ngsv
+#   ngsv-console
+#   http://github.com/xcoo/ngsv-console
 #   Copyright (C) 2012, Xcoo, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,6 +26,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 Base = declarative_base()
 
+
 class Cytoband(Base):
 
     __tablename__ = 'cytoband'
@@ -45,19 +46,15 @@ class Cytoband(Base):
         self.gie_stain = gie_stain
 
     def __repr__(self):
-        if self.id == None:
-            return '<cytoband("%d", "%d", "%d", "%s", "%s")>' % (self.chr_id,
-                                                                 self.chr_start,
-                                                                 self.chr_end,
-                                                                 self.name,
-                                                                 self.gie_stain)
+        if self.id is None:
+            return '<cytoband("%d", "%d", "%d", "%s", "%s")>' % (
+                self.chr_id, self.chr_start, self.chr_end, self.name,
+                self.gie_stain)
         else:
-            return '<cytoband("%d", "%d", "%d", "%d", "%s", "%s")>' % (self.cytoband_id,
-                                                                       self.chr_id,
-                                                                       self.chr_start,
-                                                                       self.chr_end,
-                                                                       self.name,
-                                                                       self.gie_stain)
+            return '<cytoband("%d", "%d", "%d", "%d", "%s", "%s")>' % (
+                self.cytoband_id, self.chr_id, self.chr_start, self.chr_end,
+                self.name, self.gie_stain)
+
 
 class CytobandDao():
 
