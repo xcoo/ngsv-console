@@ -22,18 +22,38 @@
 __author__ = 'Xcoo, Inc.'
 
 import argparse
+import os
+from pkg_resources import resource_string
+import tempfile
 
 import ngsvtools.samloader
+import ngsvtools.histogramloader
 import ngsvtools.bedloader
 import ngsvtools.cytobandloader
 import ngsvtools.refgeneloader
 from ngsvtools.sam.data.sql import SQLDB
 
 
+def initdb(args):
+    sql = resource_string('ngsvtools', 'data/ngsv.sql')
+
+    fd, path = tempfile.mkstemp()
+    os.write(fd, sql)
+    os.close(fd)
+
+    cmd = 'mysql --user=%s --password=%s < %s' % (args.dbuser,
+                                                  args.dbpassword,
+                                                  path)
+    os.system(cmd)
+
+    os.remove(path)
+
+
 def loadsam(args):
     db = SQLDB(args.dbname, args.dbhost, args.dbuser, args.dbpassword)
     for f in args.samfile:
         ngsvtools.samloader.load(f, db)
+        ngsvtools.histogramloader.run(f, db)
 
 
 def loadbed(args):
@@ -64,7 +84,11 @@ def add_db_arguments(parser):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    subparsers = parser.add_subparsers(help='Specify method')
+    subparsers = parser.add_subparsers()
+
+    parser_initdb = subparsers.add_parser('initdb', help='Initialize MySQL DB')
+    add_db_arguments(parser_initdb)
+    parser_initdb.set_defaults(func=initdb)
 
     parser_sam = subparsers.add_parser('loadsam', help='Load sam/bam file')
     add_db_arguments(parser_sam)

@@ -19,6 +19,7 @@
 # limitations under the License.
 #
 
+from types import NoneType
 import sys
 import os.path
 
@@ -107,11 +108,10 @@ def load(filepath, db):
         count += 1
 
         if bedfile.length >= 100 and count % (bedfile.length / 100) == 0:
-            current_task.update_state(
-                state='PROGRESS',
-                meta={'progress': (count + 1) * 100 / bedfile.length})
-
-#        print 'loaded %d fragments\r' % count,
+            if not isinstance(current_task, NoneType):
+                current_task.update_state(
+                    state='PROGRESS',
+                    meta={'progress': (count + 1) * 100 / bedfile.length})
 
     print "loaded %d fragments" % count
 
