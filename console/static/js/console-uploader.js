@@ -30,24 +30,12 @@ console.uploader = console.uploader || {};
         var cancel = $.format('sam-upload-cancel_%02d', id);
         var progress = $.format('sam-upload-progress_%02d', id);
 
-        var $e = $($.format('\
-<div class="row">\
-  <div class="span12 job-block">\
-    <h3>Uploading Sam/Bam File</h3>\
-    <input type="file" id="%s" name="file" style="display: none;">\
-    <div class="input-prepend">\
-      <a class="btn" onclick="$(\'#%s\').click();"><i class="icon-folder-open"></i></a>\
-      <input id="%s" class="input-xlarge" type="text" placeholder="sam/bam file" autocomplete="off" readonly>\
-    </div>\
-    <div class="btn-toolbar">\
-      <button id="%s" class="btn btn-primary">Upload</button>\
-      <button id="%s" class="btn">Cancel</button>\
-    </div>\
-    <div class="progress progress-striped active">\
-      <div id="%s" class="bar" style="width: 0;"></div>\
-    </div>\
-  </div>\
-</div>', upload, upload, cover, btn, cancel, progress));
+        var $e = $('#new-sam-tmpl').tmpl({
+            upload: upload,
+            cover: cover,
+            btn: btn,
+            cancel: cancel,
+            progress: progress });
         $e.prependTo('#new-task').hide().fadeIn(200);
 
         $('#' + upload).change(function() {
@@ -77,24 +65,12 @@ console.uploader = console.uploader || {};
         var cancel = $.format('bed-upload-cancel_%02d', id);
         var progress = $.format('bed-upload-progress_%02d', id);
 
-        var $e = $($.format('\
-<div class="row">\
-  <div class="span12 job-block">\
-    <h3>Uploading Bed File</h3>\
-    <input type="file" id="%s" name="file" style="display: none;">\
-    <div class="input-prepend">\
-      <a class="btn" onclick="$(\'#%s\').click();"><i class="icon-folder-open"></i></a>\
-      <input id="%s" class="input-xlarge" type="text" placeholder="bed file" autocomplete="off" readonly>\
-    </div>\
-    <div class="btn-toolbar">\
-      <button id="%s" class="btn btn-primary">Upload</button>\
-      <button id="%s" class="btn">Cancel</button>\
-    </div>\
-    <div class="progress progress-striped active">\
-      <div id="%s" class="bar" style="width: 0;"></div>\
-    </div>\
-  </div>\
-</div>', upload, upload, cover, btn, cancel, progress));
+        var $e =  $('#new-bed-tmpl').tmpl({
+            upload: upload,
+            cover: cover,
+            btn: btn,
+            cancel: cancel,
+            progress: progress });
         $e.prependTo('#new-task').hide().fadeIn(200);
 
         $('#' + upload).change(function() {

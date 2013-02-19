@@ -9,9 +9,7 @@ console.manager = console.manager || {};
 
     console.manager.addTag = function() {
         if ($('#new-tag > div').size() > 0) return;
-
-        var $template = $('#new-tag-template > div:first');
-        $template.appendTo('#new-tag').hide().fadeIn(200);
+        $('#new-tag-tmpl').tmpl().appendTo('#new-tag').hide().fadeIn(200);
     };
 }());
 
