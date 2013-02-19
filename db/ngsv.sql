@@ -173,6 +173,38 @@ CREATE  TABLE IF NOT EXISTS `ngsv`.`ref_gene` (
 ENGINE = MyISAM;
 
 
+-- -----------------------------------------------------
+-- Table `ngsv`.`tag`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `ngsv`.`tag` ;
+
+CREATE  TABLE IF NOT EXISTS `ngsv`.`tag` (
+  `tag_id` INT NOT NULL AUTO_INCREMENT ,
+  `name` VARCHAR(255) NOT NULL ,
+  PRIMARY KEY (`tag_id`) ,
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC) )
+ENGINE = MyISAM;
+
+
+-- -----------------------------------------------------
+-- Table `ngsv`.`tag_ref`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `ngsv`.`tag_ref` ;
+
+CREATE  TABLE IF NOT EXISTS `ngsv`.`tag_ref` (
+  `tag_ref_id` INT NOT NULL AUTO_INCREMENT ,
+  `tag_id` INT NOT NULL ,
+  `sam_id` BIGINT NULL ,
+  `bed_id` BIGINT NULL ,
+  PRIMARY KEY (`tag_ref_id`) ,
+  UNIQUE INDEX `tag_ref_unique` (`tag_id` ASC, `sam_id` ASC, `bed_id` ASC) ,
+  INDEX `fk_tag_id_idx` (`tag_id` ASC) ,
+  INDEX `fk_sam_id_idx` (`sam_id` ASC) ,
+  INDEX `fk_bed_id_idx` (`bed_id` ASC) )
+ENGINE = MyISAM;
+
+USE `ngsv` ;
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

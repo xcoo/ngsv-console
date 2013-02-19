@@ -3,7 +3,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-    <title>Viewer | NGSV Console</title>
+    <title>Manager | NGSV Console</title>
 
     <link type="text/css" href="/css/bootstrap.min.css" rel="stylesheet" />
     <link type="text/css" href="/css/main.css" rel="stylesheet" />
@@ -31,8 +31,8 @@
             <ul class="nav">
               <li><a href="/upload">Upload</a></li>
               <li><a href="/download">Download</a></li>
-              <li><a href="/manager">Manager</a></li>
-              <li class="active"><a href="/viewer">Viewer</a></li>
+              <li class="active"><a href="/manager">Manager</a></li>
+              <li><a href="/viewer">Viewer</a></li>
               <li><a href="/help">Help</a></li>
             </ul>
           </div>
@@ -42,40 +42,39 @@
 
     <div id="main" class="container">
       <div class="row">
-        <div class="span12">
-          <h3>Sam/Bam</h3>
-          {% for sam in sams %}
-          <label class="checkbox">
-            <input type="checkbox" name="sam" value="{{ sam.sam_id }}">
-            {{ sam.file_name }}
-          </label>
-          {% endfor %}
-          {% if not sams %}
-          <p class="text-warning">Not found</p>
-          {% endif %}
+        <div class="span12" style="margin-bottom: 10px;">
+          <button id="new-tag-btn" class="btn">Create New Tag</button>
+        </div>
+      </div>
 
-          <h3>Bed</h3>
-          {% for bed in beds %}
-          <label class="checkbox">
-            <input type="checkbox" name="bed" value="{{ bed.bed_id }}">
-            {{ bed.file_name }}
-          </label>
-          {% endfor %}
-          {% if not beds %}
-          <p class="text-warning">Not found</p>
-          {% endif %}
+      <div class="row">
+        <div class="span12" id="new-tag">
+        </div>
+      </div>
+    </div>
 
-          <h3>Chromosome</h3>
-          <select id="chr-select">
-            {% for chr in chrs %}
-            <option>{{ chr.name }}</option>
-            {% endfor %}
-          </select>
-          from
-          <input type="text" id="chr-start" class="input-small" placeholder="Start position" value="0">
-          to
-          <input type="text" id="chr-end" class="input-small" placeholder="End position" value="900000">
-          <button id="viewer-select-btn" class="btn btn-primary">Select</button>
+    <div id="new-tag-template" class="template">
+      <div class="row">
+        <div class="span12 tag-block">
+          <form method="post" action="/api/newtag">
+            <h3>New Tag</h3>
+            <input class="input-medium" type="text" name="tag-name" placeholder="tag" autocomplete="off">
+            <select name="sam">
+              {% for sam in sams %}
+              <option>{{ sam.file_name }}</option>
+              {% endfor %}
+            </select>
+<!--            <select name="bed">
+              {% for bed in beds %}
+              <option>{{ bed.file_name }}</option>
+              {% endfor %}
+            </select> -->
+            <div class="btn-toolbar">
+<!--              <button id="%s" class="btn btn-primary"> -->
+                <input type="submit" value="Create" class="btn btn-primary">
+<!--              </button> -->
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -83,9 +82,6 @@
     {% include 'footer.html' %}
 
     <script type="text/javascript" src="/js/jquery.min.js"></script>
-    <script type="text/javascript">
-      var HOSTNAME = "{{ hostname }}";
-    </script>
-    <script type="text/javascript" src="/js/console-viewer.js"></script>
+    <script type="text/javascript" src="/js/console-manager.js"></script>
   </body>
 </html>

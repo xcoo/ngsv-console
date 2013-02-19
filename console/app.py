@@ -37,6 +37,7 @@ from db.sam import SamDao
 from db.bed import BedDao
 from db.chromosome import ChromosomeDao
 from db.cytoband import CytobandDao
+from db.tag import TagDao
 from taskserver.tasks import load_sam, load_bed
 from config import Config
 
@@ -99,8 +100,7 @@ def upload():
             task = {
                 'task_id': r.id,
                 'task_name': r.task_name,
-                'sam_load_progress': 0
-                }
+                'sam_load_progress': 0}
 
             if 'file' in ti and ti['file'] is not None:
                 task['sam_file'] = ti['file']
@@ -121,8 +121,7 @@ def upload():
             task = {
                 'task_id': r.id,
                 'task_name': r.task_name,
-                'bed_load_progress': 0
-                }
+                'bed_load_progress': 0}
 
             if 'file' in ti and ti['file'] is not None:
                 task['bed_file'] = ti['file']
@@ -187,6 +186,15 @@ def download():
                            bedfiles=bedfiles)
 
 
+@app.route('/manager')
+def manager():
+    sam_dao = SamDao(engine)
+    bed_dao = BedDao(engine)
+    sams = sam_dao.all()
+    beds = bed_dao.all()
+    return render_template('manager.html', sams=sams, beds=beds)
+
+
 @app.route('/help')
 def help():
     return render_template('help.html')
@@ -226,6 +234,20 @@ def upload_bed():
         tasks_info.append({'result': r, 'file': filename})
 
     return redirect('/upload')
+
+
+@app.route('/api/newtag', methods=['POST'])
+def newtag():
+    tag_dao = TagDao(engine)
+    sam_dao = SamDao(engine)
+
+    tag_name = request.form['tag-name']
+    sam_filename = request.form['sam']
+
+    sam = sam_dao.get_by_filename(sam_filename)
+    tag_dao.add_tag_with_sam(tag_name, sam)
+
+    return redirect('/manager')
 
 
 @app.route('/api/ws/connect')

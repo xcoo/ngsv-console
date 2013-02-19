@@ -49,12 +49,12 @@ class Bed(Base):
         self.item_rgb = item_rgb
 
     def __repr__(self):  # TODO
-        if self.id is None:
+        if self.bed_id is None:
             return "<thumb('%s', '%s', '%s')>" % (self.original,
                                                   self.created_at,
                                                   self.updated_at)
         else:
-            return "<thumb('%d', '%s', '%s', '%s')>" % (self.id,
+            return "<thumb('%d', '%s', '%s', '%s')>" % (self.bed_id,
                                                         self.original,
                                                         self.created_at,
                                                         self.updated_at)

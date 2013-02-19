@@ -32,7 +32,7 @@ console.uploader = console.uploader || {};
 
         var $e = $($.format('\
 <div class="row">\
-  <div class="span12 job">\
+  <div class="span12 job-block">\
     <h3>Uploading Sam/Bam File</h3>\
     <input type="file" id="%s" name="file" style="display: none;">\
     <div class="input-prepend">\
@@ -79,7 +79,7 @@ console.uploader = console.uploader || {};
 
         var $e = $($.format('\
 <div class="row">\
-  <div class="span12 job">\
+  <div class="span12 job-block">\
     <h3>Uploading Bed File</h3>\
     <input type="file" id="%s" name="file" style="display: none;">\
     <div class="input-prepend">\
