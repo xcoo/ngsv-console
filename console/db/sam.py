@@ -24,6 +24,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
 
+from db.tag import TagRef
+
 Base = declarative_base()
 
 
@@ -50,16 +52,11 @@ class Sam(Base):
         self.number_of_chromosomes = number_of_chromosomes
         self.chromosomes = chromosomes
 
-    def __repr__(self):  # TODO
-        if self.id is None:
-            return "<thumb('%s', '%s', '%s')>" % (self.original,
-                                                  self.created_at,
-                                                  self.updated_at)
+    def __repr__(self):
+        if self.sam_id is None:
+            return "<sam('%s')>" % (self.file_name)
         else:
-            return "<thumb('%d', '%s', '%s', '%s')>" % (self.id,
-                                                        self.original,
-                                                        self.created_at,
-                                                        self.updated_at)
+            return "<sam('%d', '%s')>" % (self.sam_id, self.file_name)
 
 
 class SamDao():
@@ -79,9 +76,21 @@ class SamDao():
 
     def get_by_filename(self, filename):
         session = scoped_session(sessionmaker(bind=self._engine))
-        query = session.query(Sam).filter(Sam.file_name==filename)
+        query = session.query(Sam).filter_by(file_name=filename)
         try:
             return query.first()
+        except NoResultFound:
+            return None
+        finally:
+            session.close()
+
+    def get_by_tag(self, tag):
+        session = scoped_session(sessionmaker(bind=self._engine))
+        query = session.query(Sam)\
+            .join(TagRef, TagRef.tag_id == tag.tag_id)\
+            .filter(Sam.sam_id == TagRef.sam_id)
+        try:
+            return query.all()
         except NoResultFound:
             return None
         finally:

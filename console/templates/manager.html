@@ -49,40 +49,103 @@
 
       <div class="row">
         <div class="span12" id="new-tag">
-          <!-- jQuery template for new tag generator -->
-          <script id="new-tag-tmpl" type="text/x-jquery-tmpl">
-            <div class="row">
-              <div class="span12 tag-block">
-                <form method="post" action="/api/newtag">
-                  <h3>New Tag</h3>
-                  <input class="input-medium" type="text" name="tag-name" placeholder="tag" autocomplete="off">
-                  <select name="sam">
-                    {% for sam in sams %}
-                    <option>{{ sam.file_name }}</option>
-                    {% endfor %}
-                  </select>
-                  <!--            <select name="bed">
-                                  {% for bed in beds %}
-                                  <option>{{ bed.file_name }}</option>
-                                  {% endfor %}
-                    </select> -->
-                  <div class="btn-toolbar">
-                    <!--              <button id="%s" class="btn btn-primary"> -->
-                    <input type="submit" value="Create" class="btn btn-primary">
-                    <!--              </button> -->
-                  </div>
-                </form>
-              </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="span12" id="old-tag">
+          {% for tag in tags %}
+          <div class="row">
+            <div class="span12 tag-block">
+              <form method="post" action="/api/newtag">
+                <h3>{{ tag.tag.name }}</h3>
+                <div class="select-data" style="float: left; margin-right: 5px">
+                </div>
+
+                {% for sam in tag.sams %}
+                <p>{{ sam.file_name }}</p>
+                {% endfor %}
+
+                {% for bed in tag.beds %}
+                <p>{{ bed.file_name }}</p>
+                {% endfor %}
+
+                <div class="btn-group">
+                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                    Add
+                    <span class="caret"></span>
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li><a class="add-sam">Add sam</a></li>
+                    <li><a class="add-bed">Add bed</a></li>
+                  </ul>
+                </div>
+
+                <div class="btn-toolbar">
+                  <!--              <button id="%s" class="btn btn-primary"> -->
+                  <input type="submit" value="Update" class="btn btn-primary">
+                  <!--              </button> -->
+                </div>
+              </form>
             </div>
-          </script>
+          </div>
+          {% endfor %}
         </div>
       </div>
     </div>
 
     {% include 'footer.html' %}
 
+    <!-- jQuery templates -->
+    <script id="new-tag-tmpl" type="text/x-jquery-tmpl">
+      <div class="row">
+        <div class="span12 tag-block">
+          <form method="post" action="/api/newtag">
+            <h3>New Tag</h3>
+            <input class="input-medium" type="text" name="tag-name" placeholder="Tag" autocomplete="off">
+            <br />
+
+            <div class="select-data" style="float: left; margin-right: 5px">
+            </div>
+
+            <div class="btn-group">
+              <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                Add
+                <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="add-sam">Add sam</a></li>
+                <li><a class="add-bed">Add bed</a></li>
+              </ul>
+            </div>
+
+            <div class="btn-toolbar">
+              <!--              <button id="%s" class="btn btn-primary"> -->
+              <input type="submit" value="Create" class="btn btn-primary">
+              <!--              </button> -->
+            </div>
+          </form>
+        </div>
+      </div>
+    </script>
+    <script id="select-sam-tmpl" type="text/x-jquery-tmpl">
+      <select name="sam">
+        {% for sam in sams %}
+        <option>{{ sam.file_name }}</option>
+        {% endfor %}
+      </select>
+    </script>
+    <script id="select-bed-tmpl" type="text/x-jquery-tmpl">
+      <select name="bed">
+        {% for bed in beds %}
+        <option>{{ bed.file_name }}</option>
+        {% endfor %}
+      </select>
+    </script>
+
     <script type="text/javascript" src="/js/jquery.min.js"></script>
     <script type="text/javascript" src="/js/jquery.tmpl.min.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/js/console-manager.js"></script>
   </body>
 </html>

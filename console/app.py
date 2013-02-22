@@ -190,9 +190,18 @@ def download():
 def manager():
     sam_dao = SamDao(engine)
     bed_dao = BedDao(engine)
-    sams = sam_dao.all()
-    beds = bed_dao.all()
-    return render_template('manager.html', sams=sams, beds=beds)
+    tag_dao = TagDao(engine)
+
+    tags = []
+
+    for tag in tag_dao.all():
+        tags.append({'tag': tag,
+                     'sams': sam_dao.get_by_tag(tag),
+                     'beds': bed_dao.get_by_tag(tag)})
+
+    return render_template('manager.html',
+                           sams=sam_dao.all(), beds=bed_dao.all(),
+                           tags=tags)
 
 
 @app.route('/help')
@@ -238,14 +247,30 @@ def upload_bed():
 
 @app.route('/api/newtag', methods=['POST'])
 def newtag():
-    tag_dao = TagDao(engine)
-    sam_dao = SamDao(engine)
-
     tag_name = request.form['tag-name']
-    sam_filename = request.form['sam']
+    if not tag_name:
+        return redirect('/manager')
 
-    sam = sam_dao.get_by_filename(sam_filename)
-    tag_dao.add_tag_with_sam(tag_name, sam)
+    tag_dao = TagDao(engine)
+
+    try:
+        sam_filename = request.form['sam']
+        print sam_filename
+        if sam_filename:
+            sam_dao = SamDao(engine)
+            sam = sam_dao.get_by_filename(sam_filename)
+            tag_dao.add_tag_with_sam(tag_name, sam)
+    except KeyError:
+        pass
+
+    try:
+        bed_filename = request.form['bed']
+        if bed_filename:
+            bed_dao = BedDao(engine)
+            bed = bed_dao.get_by_filename(bed_filename)
+            tag_dao.add_tag_with_bed(tag_name, bed)
+    except KeyError:
+        pass
 
     return redirect('/manager')
 

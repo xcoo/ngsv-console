@@ -72,6 +72,16 @@ class TagDao():
     def __init__(self, engine):
         self._engine = engine
 
+    def all(self):
+        session = scoped_session(sessionmaker(bind=self._engine))
+        query = session.query(Tag)
+        try:
+            return query.all()
+        except NoResultFound:
+            return None
+        finally:
+            session.close()
+
     def _add_tag(self, name):
         session = scoped_session(sessionmaker(bind=self._engine))
         tag = Tag(name)
@@ -81,8 +91,12 @@ class TagDao():
 
     def add_tag_with_sam(self, name, sam):
         session = scoped_session(sessionmaker(bind=self._engine))
-        self._add_tag(name)
+
         tag = self.get_by_name(name)
+        if tag is None:
+            self._add_tag(name)
+            tag = self.get_by_name(name)
+
         tag_ref = TagRef(tag.tag_id, sam_id=sam.sam_id)
         session.add(tag_ref)
         session.commit()
@@ -90,8 +104,12 @@ class TagDao():
 
     def add_tag_with_bed(self, name, bed):
         session = scoped_session(sessionmaker(bind=self._engine))
-        self._add_tag(name)
+
         tag = self.get_by_name(name)
+        if tag is None:
+            self._add_tag(name)
+            tag = self.get_by_name(name)
+
         tag_ref = TagRef(tag.tag_id, bed_id=bed.bed_id)
         session.add(tag_ref)
         session.commit()
@@ -99,7 +117,7 @@ class TagDao():
 
     def get_by_name(self, name):
         session = scoped_session(sessionmaker(bind=self._engine))
-        query = session.query(Tag).filter(Tag.name==name)
+        query = session.query(Tag).filter_by(name=name)
         try:
             return query.first()
         except NoResultFound:

@@ -9,7 +9,14 @@ console.manager = console.manager || {};
 
     console.manager.addTag = function() {
         if ($('#new-tag > div').size() > 0) return;
-        $('#new-tag-tmpl').tmpl().appendTo('#new-tag').hide().fadeIn(200);
+        var $e = $('#new-tag-tmpl').tmpl();
+        $e.find('.add-sam').click(function() {
+            $('#select-sam-tmpl').tmpl().appendTo($e.find('.select-data')).hide().fadeIn(200);
+        });
+        $e.find('.add-bed').click(function() {
+            $('#select-bed-tmpl').tmpl().appendTo($e.find('.select-data')).hide().fadeIn(200);
+        });
+        $e.appendTo('#new-tag').hide().fadeIn(200);
     };
 }());
 

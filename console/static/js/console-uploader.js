@@ -39,7 +39,7 @@ console.uploader = console.uploader || {};
         $e.prependTo('#new-task').hide().fadeIn(200);
 
         $('#' + upload).change(function() {
-            $('#' + cover).val($(this).val());
+            $('#' + cover).html($(this).val());
         });
 
         console.uploader.initUploader('/api/upload-sam', $('#' + upload), $('#' + btn), $('#' + progress));
@@ -74,7 +74,7 @@ console.uploader = console.uploader || {};
         $e.prependTo('#new-task').hide().fadeIn(200);
 
         $('#' + upload).change(function() {
-            $('#' + cover).val($(this).val());
+            $('#' + cover).html($(this).val());
         });
 
         console.uploader.initUploader('/api/upload-bed', $('#' + upload), $('#' + btn), $('#' + progress));
