@@ -46,6 +46,7 @@
         <div class="span12" style="margin-bottom: 10px;">
           <button id="sam-upload-select-btn" class="btn">Upload Sam/Bam File</button>
           <button id="bed-upload-select-btn" class="btn">Upload Bed File</button>
+          <button id="cnv-upload-select-btn" class="btn">Upload CSV</button>
         </div>
       </div>
 
@@ -94,6 +95,26 @@
             </div>
           </script>
 
+          <!-- jQuery template for new cnv uploader -->
+          <script id="new-cnv-tmpl" type="text/x-jquery-tmpl">
+            <div class="row">
+              <div class="span12 job-block">
+                <h3>Uploading Cnv File</h3>
+                <input type="file" id="${upload}" name="file" style="display: none;">
+                <div class="input-prepend">
+                  <a class="btn" onclick="$('#${upload}').click();"><i class="icon-folder-open"></i></a>
+                  <span id="${cover}" class="input-xlarge uneditable-input">cnv file</span>
+                </div>
+                <div class="btn-toolbar">
+                  <button id="${btn}" class="btn btn-primary">Upload</button>
+                  <button id="${cancel}" class="btn">Cancel</button>
+                </div>
+                <div class="progress progress-striped active">
+                  <div id="${progress}" class="bar" style="width: 0;"></div>
+                </div>
+              </div>
+            </div>
+          </script>
         </div>
       </div>
 
@@ -137,6 +158,28 @@
 
               <div class="progress progress-striped active" style="margin-top: 10px;">
                 <div class="bar" style="width: {{ t.bed_load_progress }};">{{ t.bed_load_progress }}</div>
+              </div>
+
+              {% if t.alert %}
+              <div class="alert">
+                {{ t.alert }}
+              </div>
+              {% endif %}
+
+              {% endif %}
+
+              {% if t.task_name == 'tasks.load_cnv' %}
+
+              <h3>Loading Cnv</h3>
+
+              {% if t.cnv_file %}
+              <dl>
+                <dt>Cnv file</dt><dd>{{ t.cnv_file }}</dd>
+              </dl>
+              {% endif %}
+
+              <div class="progress progress-striped active" style="margin-top: 10px;">
+                <div class="bar" style="width: {{ t.cnv_load_progress }};">{{ t.cnv_load_progress }}</div>
               </div>
 
               {% if t.alert %}

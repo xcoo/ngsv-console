@@ -58,6 +58,14 @@
           {% if not bedfiles %}
           <p class="text-warning">Not found</p>
           {% endif %}
+
+          <h3>Cnv</h3>
+          {% for f in cnvfiles %}
+          <p><a href="{{ f.url }}">{{ f.name }}</a></p>
+          {% endfor %}
+          {% if not cnvfiles %}
+          <p class="text-warning">Not found</p>
+          {% endif %}
         </div>
       </div>
     </div>

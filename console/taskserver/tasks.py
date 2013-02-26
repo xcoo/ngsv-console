@@ -26,6 +26,7 @@ from celery.decorators import task
 import ngsvtools.samloader
 import ngsvtools.histogramloader
 import ngsvtools.bedloader
+import ngsvtools.cnvloader
 from ngsvtools.sam.data.sql import SQLDB
 from ngsvtools.exception import UnsupportedFileError, AlreadyLoadedError
 
@@ -65,6 +66,22 @@ def load_bed(bed_file, db_name, db_host, db_user, db_password):
 
     try:
         ngsvtools.bedloader.load(bed_file, db)
+    except UnsupportedFileError, e:
+        return {'state': 'SUCCESS_WITH_ALERT', 'alert': e.msg}
+    except AlreadyLoadedError, e:
+        return {'state': 'SUCCESS_WITH_ALERT', 'alert': e.msg}
+
+    return {'state': 'SUCCESS'}
+
+
+# Load a cnv file.
+@task(name='tasks.load_cnv')
+def load_cnv(cnv_file, db_name, db_host, db_user, db_password):
+    current_task.update_state(state='STARTED')
+    db = SQLDB(db_name, db_host, db_user, db_password)
+
+    try:
+        ngsvtools.cnvloader.load(cnv_file, db)
     except UnsupportedFileError, e:
         return {'state': 'SUCCESS_WITH_ALERT', 'alert': e.msg}
     except AlreadyLoadedError, e:

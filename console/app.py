@@ -35,10 +35,11 @@ from sqlalchemy import create_engine
 
 from db.sam import SamDao
 from db.bed import BedDao
+from db.cnv import CnvDao
 from db.chromosome import ChromosomeDao
 from db.cytoband import CytobandDao
 from db.tag import TagDao
-from taskserver.tasks import load_sam, load_bed
+from taskserver.tasks import load_sam, load_bed, load_cnv
 from config import Config
 
 app = Flask(__name__)
@@ -138,6 +139,25 @@ def upload():
 
             tasks.append(task)
 
+        if r.task_name == 'tasks.load_cnv':
+            task = {
+                'task_id': r.id,
+                'task_name': r.task_name,
+                'cnv_load_progress': 0}
+
+            if 'file' in ti and ti['file'] is not None:
+                task['cnv_file'] = ti['file']
+
+            if r.status == 'SUCCESS':
+                task['cnv_load_progress'] = '100%'
+                if r.result['state'] == 'SUCCESS_WITH_ALERT':
+                    task['alert'] = r.result['alert']
+            if r.status == 'FAILURE':
+                task['cnv_load_progress'] = '100%'
+                task['alert'] = 'FAILURE'
+
+            tasks.append(task)
+
     return render_template('upload.html', tasks=tasks)
 
 
@@ -165,9 +185,11 @@ def viewer():
 def download():
     sam_dao = SamDao(engine)
     bed_dao = BedDao(engine)
+    cnv_dao = CnvDao(engine)
 
     samfiles = []
     bedfiles = []
+    cnvfiles = []
 
     for sam in sam_dao.all():
         f = {}
@@ -181,9 +203,16 @@ def download():
         f['url'] = urljoin(conf.upload_dir_url, bed.file_name)
         bedfiles.append(f)
 
+    for cnv in cnv_dao.all():
+        f = {}
+        f['name'] = cnv.file_name
+        f['url'] = urljoin(conf.upload_dir_url, cnv.file_name)
+        cnvfiles.append(f)
+
     return render_template('download.html',
                            samfiles=samfiles,
-                           bedfiles=bedfiles)
+                           bedfiles=bedfiles,
+                           cnvfiles=cnvfiles)
 
 
 @app.route('/manager')
@@ -236,6 +265,24 @@ def upload_bed():
         f.save(bed_file)
 
         r = load_bed.delay(bed_file,
+                           conf.db_name,
+                           conf.db_host,
+                           conf.db_user,
+                           conf.db_password)
+        tasks_info.append({'result': r, 'file': filename})
+
+    return redirect('/upload')
+
+
+@app.route('/api/upload-cnv', methods=['POST'])
+def upload_cnv():
+    f = request.files['file']
+    if f and allowed_file(f.filename, ['rawcnv', 'cnv']):
+        filename = secure_filename(f.filename)
+        cnv_file = os.path.join(conf.upload_dir, filename)
+        f.save(cnv_file)
+
+        r = load_cnv.delay(cnv_file,
                            conf.db_name,
                            conf.db_host,
                            conf.db_user,

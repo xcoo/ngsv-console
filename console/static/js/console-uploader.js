@@ -6,6 +6,7 @@ console.uploader = console.uploader || {};
     console.uploader.main = function() {
         $('#sam-upload-select-btn').click(console.uploader.addSamUploader);
         $('#bed-upload-select-btn').click(console.uploader.addBedUploader);
+        $('#cnv-upload-select-btn').click(console.uploader.addCnvUploader);
 
         $('.progress .bar').each(function() {
             if ($(this).html() == '100%') {
@@ -78,6 +79,41 @@ console.uploader = console.uploader || {};
         });
 
         console.uploader.initUploader('/api/upload-bed', $('#' + upload), $('#' + btn), $('#' + progress));
+
+        $('#' + cancel).click(function() {
+            $e.fadeOut(200, function() {
+                $(this).remove();
+            });
+        });
+    };
+
+    console.uploader.addCnvUploader = function() {
+        var id = 0;
+        while (1) {
+            if ($($.format('#cnv-upload_%02d', id)).length == 0)
+                break;
+            id++;
+        };
+
+        var upload = $.format('cnv-upload_%02d', id);
+        var cover = $.format('cnv-upload-cover_%02d', id);
+        var btn = $.format('cnv-upload-btn_%02d', id);
+        var cancel = $.format('cnv-upload-cancel_%02d', id);
+        var progress = $.format('cnv-upload-progress_%02d', id);
+
+        var $e =  $('#new-cnv-tmpl').tmpl({
+            upload: upload,
+            cover: cover,
+            btn: btn,
+            cancel: cancel,
+            progress: progress });
+        $e.prependTo('#new-task').hide().fadeIn(200);
+
+        $('#' + upload).change(function() {
+            $('#' + cover).html($(this).val());
+        });
+
+        console.uploader.initUploader('/api/upload-cnv', $('#' + upload), $('#' + btn), $('#' + progress));
 
         $('#' + cancel).click(function() {
             $e.fadeOut(200, function() {
