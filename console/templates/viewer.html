@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
   <head>
-    <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
     <title>Viewer | NGSV Console</title>
@@ -9,7 +8,7 @@
     <link type="text/css" href="/css/bootstrap.min.css" rel="stylesheet" />
     <link type="text/css" href="/css/main.css" rel="stylesheet" />
 
-    <link rel="shortcut icon" href="/img/favicon.ico"> 
+    <link rel="shortcut icon" href="/img/favicon.ico">
 
     <!--[if lt IE 9]>
       <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -25,12 +24,14 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
           </button>
           <a class="brand" href="/">NGSV Console</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
               <li><a href="/upload">Upload</a></li>
               <li><a href="/download">Download</a></li>
+              <li><a href="/manager">Manager</a></li>
               <li class="active"><a href="/viewer">Viewer</a></li>
               <li><a href="/help">Help</a></li>
             </ul>
@@ -42,40 +43,38 @@
     <div id="main" class="container">
       <div class="row">
         <div class="span12">
-          <form>
-            <h3>Sam/Bam</h3>
-            {% for sam in sams %}
-            <label class="checkbox">
-              <input type="checkbox" name="sam" value="{{ sam.sam_id }}">
-              {{ sam.file_name }}
-            </label>
-            {% endfor %}
-            {% if not sams %}
-            <p class="text-warning">Not found</p>
-            {% endif %}
+          <h3>Sam/Bam</h3>
+          {% for sam in sams %}
+          <label class="checkbox">
+            <input type="checkbox" name="sam" value="{{ sam.sam_id }}">
+            {{ sam.file_name }}
+          </label>
+          {% endfor %}
+          {% if not sams %}
+          <p class="text-warning">Not found</p>
+          {% endif %}
 
-            <h3>Bed</h3>
-            {% for bed in beds %}
-            <label class="checkbox">
-              <input type="checkbox" name="bed" value="{{ bed.bed_id }}">
-              {{ bed.file_name }}
-            </label>
-            {% endfor %}
-            {% if not beds %}
-            <p class="text-warning">Not found</p>
-            {% endif %}
+          <h3>Bed</h3>
+          {% for bed in beds %}
+          <label class="checkbox">
+            <input type="checkbox" name="bed" value="{{ bed.bed_id }}">
+            {{ bed.file_name }}
+          </label>
+          {% endfor %}
+          {% if not beds %}
+          <p class="text-warning">Not found</p>
+          {% endif %}
 
-            <h3>Chromosome</h3>
-              <select id="chr-select">
-                {% for chr in chrs %}
-                <option>{{ chr.name }}</option>
-                {% endfor %}
-              </select>
-              from
-              <input type="text" id="chr-start" class="input-small" placeholder="Start position" value="0">
-              to
-              <input type="text" id="chr-end" class="input-small" placeholder="End position" value="900000">
-          </form>
+          <h3>Chromosome</h3>
+          <select id="chr-select">
+            {% for chr in chrs %}
+            <option>{{ chr.name }}</option>
+            {% endfor %}
+          </select>
+          from
+          <input type="text" id="chr-start" class="input-small" placeholder="Start position" value="0">
+          to
+          <input type="text" id="chr-end" class="input-small" placeholder="End position" value="900000">
           <button id="viewer-select-btn" class="btn btn-primary">Select</button>
         </div>
       </div>

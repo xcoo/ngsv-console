@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
   <head>
-    <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
     <title>NGSV Console</title>
@@ -9,7 +8,7 @@
     <link type="text/css" href="/css/bootstrap.min.css" rel="stylesheet" />
     <link type="text/css" href="/css/main.css" rel="stylesheet" />
 
-    <link rel="shortcut icon" href="/img/favicon.ico"> 
+    <link rel="shortcut icon" href="/img/favicon.ico" />
 
     <!--[if lt IE 9]>
       <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -25,12 +24,14 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
           </button>
           <a class="brand" href="/">NGSV Console</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
               <li class="active"><a href="/upload">Upload</a></li>
               <li><a href="/download">Download</a></li>
+              <li><a href="/manager">Manager</a></li>
               <li><a href="/viewer">Viewer</a></li>
               <li><a href="/help">Help</a></li>
             </ul>
@@ -44,12 +45,55 @@
       <div class="row">
         <div class="span12" style="margin-bottom: 10px;">
           <button id="sam-upload-select-btn" class="btn">Upload Sam/Bam File</button>
-          <button id="bed-upload-select-btn" class="btn">Upload Bed File</button>          
+          <button id="bed-upload-select-btn" class="btn">Upload Bed File</button>
         </div>
       </div>
 
       <div class="row">
         <div class="span12" id="new-task">
+
+          <!-- jQuery template for new sam uploader -->
+          <script id="new-sam-tmpl" type="text/x-jquery-tmpl">
+            <div class="row">
+              <div class="span12 job-block">
+                <h3>Uploading Sam/Bam File</h3>
+                <input type="file" id="${upload}" name="file" style="display: none;">
+                <div class="input-prepend">
+                  <a class="btn" onclick="$('#${upload}').click();"><i class="icon-folder-open"></i></a>
+                  <span id="${cover}" class="input-xlarge uneditable-input">sam/bam file</span>
+                </div>
+                <div class="btn-toolbar">
+                  <button id="${btn}" class="btn btn-primary">Upload</button>
+                  <button id="${cancel}" class="btn">Cancel</button>
+                </div>
+                <div class="progress progress-striped active">
+                  <div id="${progress}" class="bar" style="width: 0;"></div>
+                </div>
+              </div>
+            </div>
+          </script>
+
+          <!-- jQuery template for new bed uploader -->
+          <script id="new-bed-tmpl" type="text/x-jquery-tmpl">
+            <div class="row">
+              <div class="span12 job-block">
+                <h3>Uploading Bed File</h3>
+                <input type="file" id="${upload}" name="file" style="display: none;">
+                <div class="input-prepend">
+                  <a class="btn" onclick="$('#${upload}').click();"><i class="icon-folder-open"></i></a>
+                  <span id="${cover}" class="input-xlarge uneditable-input">bed file</span>
+                </div>
+                <div class="btn-toolbar">
+                  <button id="${btn}" class="btn btn-primary">Upload</button>
+                  <button id="${cancel}" class="btn">Cancel</button>
+                </div>
+                <div class="progress progress-striped active">
+                  <div id="${progress}" class="bar" style="width: 0;"></div>
+                </div>
+              </div>
+            </div>
+          </script>
+
         </div>
       </div>
 
@@ -58,7 +102,7 @@
 
           {% for t in tasks %}
           <div class="row">
-            <div class="span12 job">
+            <div class="span12 job-block">
               {% if t.task_name == 'tasks.load_sam' %}
 
               <h3>Loading Sam/Bam</h3>
@@ -114,6 +158,7 @@
     {% include 'footer.html' %}
 
     <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.tmpl.min.js"></script>
     <script type="text/javascript" src="/js/format4js.js"></script>
     <script type="text/javascript" src="/js/uploader.js"></script>
     <script type="text/javascript" src="/js/console-uploader.js"></script>

@@ -2,9 +2,6 @@ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
-DROP SCHEMA IF EXISTS `ngsv` ;
-CREATE SCHEMA IF NOT EXISTS `ngsv` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
-USE `ngsv` ;
 
 -- -----------------------------------------------------
 -- Table `ngsv`.`sam`
@@ -174,6 +171,37 @@ ENGINE = MyISAM;
 
 
 -- -----------------------------------------------------
+-- Table `ngsv`.`tag`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `ngsv`.`tag` ;
+
+CREATE  TABLE IF NOT EXISTS `ngsv`.`tag` (
+  `tag_id` INT NOT NULL AUTO_INCREMENT ,
+  `name` VARCHAR(255) NOT NULL ,
+  PRIMARY KEY (`tag_id`) ,
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC) )
+ENGINE = MyISAM;
+
+
+-- -----------------------------------------------------
+-- Table `ngsv`.`tag_ref`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `ngsv`.`tag_ref` ;
+
+CREATE  TABLE IF NOT EXISTS `ngsv`.`tag_ref` (
+  `tag_ref_id` INT NOT NULL AUTO_INCREMENT ,
+  `tag_id` INT NOT NULL ,
+  `sam_id` BIGINT NULL ,
+  `bed_id` BIGINT NULL ,
+  PRIMARY KEY (`tag_ref_id`) ,
+  UNIQUE INDEX `tag_ref_unique` (`tag_id` ASC, `sam_id` ASC, `bed_id` ASC) ,
+  INDEX `fk_tag_id_idx` (`tag_id` ASC) ,
+  INDEX `fk_sam_id_idx` (`sam_id` ASC) ,
+  INDEX `fk_bed_id_idx` (`bed_id` ASC) )
+ENGINE = MyISAM;
+
+
+-- -----------------------------------------------------
 -- Table `ngsv`.`cnv`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `ngsv`.`cnv` ;
@@ -190,11 +218,10 @@ CREATE  TABLE IF NOT EXISTS `ngsv`.`cnv` (
   `num_snp` BIGINT NOT NULL ,
   `snp_start` VARCHAR(45) NOT NULL ,
   `snp_end` VARCHAR(45) NOT NULL ,
-  INDEX `fk_cnv_chromosome_idx` (`chr_id` ASC) ,
-  PRIMARY KEY (`cnv_id`) )
+  PRIMARY KEY (`cnv_id`) ,
+  INDEX `fk_cnv_chromosome_idx_idx` (`chr_id` ASC) )
 ENGINE = MyISAM;
 
-USE `ngsv` ;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;

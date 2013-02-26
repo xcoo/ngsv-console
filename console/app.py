@@ -37,6 +37,7 @@ from db.sam import SamDao
 from db.bed import BedDao
 from db.chromosome import ChromosomeDao
 from db.cytoband import CytobandDao
+from db.tag import TagDao
 from taskserver.tasks import load_sam, load_bed
 from config import Config
 
@@ -99,8 +100,7 @@ def upload():
             task = {
                 'task_id': r.id,
                 'task_name': r.task_name,
-                'sam_load_progress': 0
-                }
+                'sam_load_progress': 0}
 
             if 'file' in ti and ti['file'] is not None:
                 task['sam_file'] = ti['file']
@@ -121,8 +121,7 @@ def upload():
             task = {
                 'task_id': r.id,
                 'task_name': r.task_name,
-                'bed_load_progress': 0
-                }
+                'bed_load_progress': 0}
 
             if 'file' in ti and ti['file'] is not None:
                 task['bed_file'] = ti['file']
@@ -187,6 +186,24 @@ def download():
                            bedfiles=bedfiles)
 
 
+@app.route('/manager')
+def manager():
+    sam_dao = SamDao(engine)
+    bed_dao = BedDao(engine)
+    tag_dao = TagDao(engine)
+
+    tags = []
+
+    for tag in tag_dao.all():
+        tags.append({'tag': tag,
+                     'sams': sam_dao.get_by_tag(tag),
+                     'beds': bed_dao.get_by_tag(tag)})
+
+    return render_template('manager.html',
+                           sams=sam_dao.all(), beds=bed_dao.all(),
+                           tags=tags)
+
+
 @app.route('/help')
 def help():
     return render_template('help.html')
@@ -226,6 +243,36 @@ def upload_bed():
         tasks_info.append({'result': r, 'file': filename})
 
     return redirect('/upload')
+
+
+@app.route('/api/newtag', methods=['POST'])
+def newtag():
+    tag_name = request.form['tag-name']
+    if not tag_name:
+        return redirect('/manager')
+
+    tag_dao = TagDao(engine)
+
+    try:
+        sam_filename = request.form['sam']
+        print sam_filename
+        if sam_filename:
+            sam_dao = SamDao(engine)
+            sam = sam_dao.get_by_filename(sam_filename)
+            tag_dao.add_tag_with_sam(tag_name, sam)
+    except KeyError:
+        pass
+
+    try:
+        bed_filename = request.form['bed']
+        if bed_filename:
+            bed_dao = BedDao(engine)
+            bed = bed_dao.get_by_filename(bed_filename)
+            tag_dao.add_tag_with_bed(tag_name, bed)
+    except KeyError:
+        pass
+
+    return redirect('/manager')
 
 
 @app.route('/api/ws/connect')

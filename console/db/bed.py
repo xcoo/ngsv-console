@@ -18,11 +18,19 @@
 # limitations under the License.
 #
 
+__author__ = 'Toshiki Takeuchi'
+__copyright__ = 'Copyright (C) 2012, Xcoo, Inc.'
+__license__ = 'Apache License 2.0'
+__maintainer__ = 'Toshiki Takeuchi'
+__email__ = 'developer@xcoo.jp'
+
 from sqlalchemy import Column
 from sqlalchemy import Integer, BigInteger, String, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
+
+from db.tag import TagRef
 
 Base = declarative_base()
 
@@ -48,16 +56,11 @@ class Bed(Base):
         self.visibility = visibility
         self.item_rgb = item_rgb
 
-    def __repr__(self):  # TODO
-        if self.id is None:
-            return "<thumb('%s', '%s', '%s')>" % (self.original,
-                                                  self.created_at,
-                                                  self.updated_at)
+    def __repr__(self):
+        if self.bed_id is None:
+            return "<bed('%s')>" % (self.file_name)
         else:
-            return "<thumb('%d', '%s', '%s', '%s')>" % (self.id,
-                                                        self.original,
-                                                        self.created_at,
-                                                        self.updated_at)
+            return "<bed('%d', '%s')>" % (self.bed_id, self.file_name)
 
 
 class BedDao():
@@ -68,6 +71,28 @@ class BedDao():
     def all(self):
         session = scoped_session(sessionmaker(bind=self._engine))
         query = session.query(Bed)
+        try:
+            return query.all()
+        except NoResultFound:
+            return None
+        finally:
+            session.close()
+
+    def get_by_filename(self, filename):
+        session = scoped_session(sessionmaker(bind=self._engine))
+        query = session.query(Bed).filter_by(file_name=filename)
+        try:
+            return query.first()
+        except NoResultFound:
+            return None
+        finally:
+            session.close()
+
+    def get_by_tag(self, tag):
+        session = scoped_session(sessionmaker(bind=self._engine))
+        query = session.query(Bed)\
+            .join(TagRef, TagRef.tag_id == tag.tag_id)\
+            .filter(Bed.bed_id == TagRef.bed_id)
         try:
             return query.all()
         except NoResultFound:
