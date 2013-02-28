@@ -245,8 +245,8 @@ def upload_bed():
     return redirect('/upload')
 
 
-@app.route('/api/newtag', methods=['POST'])
-def newtag():
+@app.route('/api/tag/new', methods=['POST'])
+def tag_new():
     tag_name = request.form['tag-name']
     if not tag_name:
         return redirect('/manager')
@@ -273,6 +273,11 @@ def newtag():
         pass
 
     return redirect('/manager')
+
+
+@app.route('/api/tag/update', methods=['POST'])
+def tag_update():
+    pass
 
 
 @app.route('/api/ws/connect')
