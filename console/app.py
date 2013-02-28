@@ -255,7 +255,6 @@ def tag_new():
 
     try:
         sam_filename = request.form['sam']
-        print sam_filename
         if sam_filename:
             sam_dao = SamDao(engine)
             sam = sam_dao.get_by_filename(sam_filename)
@@ -277,7 +276,11 @@ def tag_new():
 
 @app.route('/api/tag/update', methods=['POST'])
 def tag_update():
-    pass
+    tag_name = request.form['tag-name']
+    if not tag_name:
+        return redirect('/manager')
+
+    return redirect('/manager')
 
 
 @app.route('/api/ws/connect')
