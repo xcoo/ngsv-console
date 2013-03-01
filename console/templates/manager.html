@@ -60,6 +60,7 @@
             <div class="span12 tag-block">
               <h3>{{ tag.tag.name }}</h3>
               <form method="post" action="/api/tag/update" class="form-horizontal">
+                <input type="hidden" name="tag-name" value="{{ tag.tag.name }}">
                 {% if sams %}
                 <div class="control-group">
                   <label class="control-label" for="inputEmail">Sam/Bam</label>
@@ -91,6 +92,11 @@
                   <input type="submit" value="Update" class="btn btn-primary">
                   <!--              </button> -->
                 </div>
+              </form>
+
+              <form method="post" action="/api/tag/remove">
+                <input type="hidden" name="tag-id" value="{{ tag.tag.tag_id }}">
+                <input type="submit" value="Remove" class="btn btn-danger">
               </form>
             </div>
           </div>

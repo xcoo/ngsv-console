@@ -254,18 +254,18 @@ def tag_new():
     tag_dao = TagDao(engine)
 
     try:
-        sam_filename = request.form['sam']
-        if sam_filename:
-            sam_dao = SamDao(engine)
+        sam_filenames = request.form.getlist('sam')
+        sam_dao = SamDao(engine)
+        for sam_filename in sam_filenames:
             sam = sam_dao.get_by_filename(sam_filename)
             tag_dao.add_tag_with_sam(tag_name, sam)
     except KeyError:
         pass
 
     try:
-        bed_filename = request.form['bed']
-        if bed_filename:
-            bed_dao = BedDao(engine)
+        bed_filenames = request.form.getlist('bed')
+        bed_dao = BedDao(engine)
+        for bed_filename in bed_filenames:
             bed = bed_dao.get_by_filename(bed_filename)
             tag_dao.add_tag_with_bed(tag_name, bed)
     except KeyError:
@@ -279,6 +279,42 @@ def tag_update():
     tag_name = request.form['tag-name']
     if not tag_name:
         return redirect('/manager')
+
+    tag_dao = TagDao(engine)
+    tag = tag_dao.get_by_name(tag_name)
+
+    try:
+        req_sam_filenames = request.form.getlist('sam')
+        sam_dao = SamDao(engine)
+        for sam in sam_dao.get_by_tag(tag):
+            if not sam.file_name in req_sam_filenames:
+                tag_dao.remove_sam(sam, tag)
+        for filename in req_sam_filenames:
+            sam = sam_dao.get_by_filename(filename)
+            tag_dao.add_tag_with_sam(tag_name, sam)
+    except KeyError:
+        pass
+
+    try:
+        bed_filenames = request.form.getlist('bed')
+        bed_dao = BedDao(engine)
+        for bed_filename in bed_filenames:
+            bed = bed_dao.get_by_filename(bed_filename)
+            tag_dao.add_tag_with_bed(tag_name, bed)
+    except KeyError:
+        pass
+
+    return redirect('/manager')
+
+
+@app.route('/api/tag/remove', methods=['POST'])
+def tag_remove():
+    tag_id = request.form['tag-id']
+    if not tag_id:
+        return redirect('/manager')
+
+    tag_dao = TagDao(engine)
+    tag_dao.remove_by_id(tag_id)
 
     return redirect('/manager')
 

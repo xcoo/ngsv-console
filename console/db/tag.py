@@ -124,3 +124,23 @@ class TagDao():
             return None
         finally:
             session.close()
+
+    def remove_by_id(self, tag_id):
+        session = scoped_session(sessionmaker(bind=self._engine))
+        try:
+            session.query(TagRef).filter_by(tag_id=tag_id).delete()
+            session.query(Tag).filter_by(tag_id=tag_id).delete()
+        finally:
+            session.close()
+
+    def remove_sam(self, sam, tag):
+        session = scoped_session(sessionmaker(bind=self._engine))
+        query = session.query(TagRef) \
+            .filter_by(tag_id=tag.tag_id) \
+            .filter_by(sam_id=sam.sam_id)
+        try:
+            return query.delete()
+        except NoResultFound:
+            return None
+        finally:
+            session.close()
