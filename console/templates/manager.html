@@ -54,18 +54,19 @@
       </div>
 
       <div class="row">
-        <div class="span12" id="old-tag">
+        <div class="span12" id="registered-tags">
           {% for tag in tags %}
           <div class="row old-tag" data-tag-id="{{ tag.tag.tag_id }}">
             <div class="span12 tag-block">
               <h3>{{ tag.tag.name }}</h3>
-              <form method="post" action="/api/tag/update" class="form-horizontal">
-                <input type="hidden" name="tag-name" value="{{ tag.tag.name }}">
+
+              <form method="post" action="/api/tag/update" class="form-horizontal" id="update-{{ tag.tag.tag_id }}">
+                <input type="hidden" name="tag-id" value="{{ tag.tag.tag_id }}">
                 {% if sams %}
                 <div class="control-group">
-                  <label class="control-label" for="inputEmail">Sam/Bam</label>
+                  <label class="control-label">Sam/Bam</label>
                   <div class="controls">
-                    <select name="sam" data-placeholder="Select Sam" class="chzn-select" multiple autocomplete="off" style="width:350px;" tabindex="4">
+                    <select name="sam" data-placeholder="Select Sam" class="chzn-select" multiple autocomplete="off" style="width: 450px;" tabindex="4">
                       {% for sam in sams %}
                       <option value="{{ sam.file_name }}">{{ sam.file_name }}</option>
                       {% endfor %}
@@ -76,9 +77,9 @@
 
                 {% if beds %}
                 <div class="control-group">
-                  <label class="control-label" for="inputEmail">Bed</label>
+                  <label class="control-label">Bed</label>
                   <div class="controls">
-                    <select name="bed" data-placeholder="Select Bed" class="chzn-select" multiple autocomplete="off" style="width:350px;" tabindex="4">
+                    <select name="bed" data-placeholder="Select Bed" class="chzn-select" multiple autocomplete="off" style="width: 450px;" tabindex="4">
                       {% for bed in beds %}
                       <option value="{{ bed.file_name }}">{{ bed.file_name }}</option>
                       {% endfor %}
@@ -86,18 +87,20 @@
                   </div>
                 </div>
                 {% endif %}
-
-                <div class="btn-toolbar">
-                  <!--              <button id="%s" class="btn btn-primary"> -->
-                  <input type="submit" value="Update" class="btn btn-primary">
-                  <!--              </button> -->
-                </div>
               </form>
 
-              <form method="post" action="/api/tag/remove">
+              <form method="post" action="/api/tag/remove" id="remove-{{ tag.tag.tag_id }}">
                 <input type="hidden" name="tag-id" value="{{ tag.tag.tag_id }}">
-                <input type="submit" value="Remove" class="btn btn-danger">
               </form>
+
+              <div class="form-actions" style="padding-left: 180px">
+                <button class="btn btn-primary" onclick="$('#update-{{ tag.tag.tag_id }}').submit()">
+                  Update
+                </button>
+                <button class="btn btn-danger" onclick="$('#remove-{{ tag.tag.tag_id }}').submit()" style="float: right;">
+                  Remove
+                </button>
+              </div>
             </div>
           </div>
           {% endfor %}
@@ -125,7 +128,7 @@
             <div class="control-group">
               <label class="control-label" for="inputEmail">Sam/Bam</label>
               <div class="controls">
-                <select name="sam" data-placeholder="Select Sam" class="chzn-select" multiple autocomplete="off" style="width:350px;" tabindex="4">
+                <select name="sam" data-placeholder="Select Sam" class="chzn-select" multiple autocomplete="off" style="width: 450px;" tabindex="4">
                   <option value=""></option>
                   {% for sam in sams %}
                   <option value="{{ sam.file_name }}">{{ sam.file_name }}</option>
@@ -139,7 +142,7 @@
             <div class="control-group">
               <label class="control-label" for="inputEmail">Bed</label>
               <div class="controls">
-                <select name="bed" data-placeholder="Select Bed" class="chzn-select" multiple autocomplete="off" style="width:350px;" tabindex="4">
+                <select name="bed" data-placeholder="Select Bed" class="chzn-select" multiple autocomplete="off" style="width: 450px;" tabindex="4">
                   <option value=""></option>
                   {% for bed in beds %}
                   <option value="{{ bed.file_name }}">{{ bed.file_name }}</option>
@@ -149,29 +152,14 @@
             </div>
             {% endif %}
 
-            <div class="btn-toolbar">
-              <!--              <button id="%s" class="btn btn-primary"> -->
-              <input type="submit" value="Create" class="btn btn-primary">
-              <!--              </button> -->
+            <div class="form-actions" style="padding-left: 180px">
+              <button type="submit" class="btn btn-primary">
+                Create
+              </button>
             </div>
           </form>
         </div>
       </div>
-    </script>
-    <script id="select-sam-tmpl" type="text/x-jquery-tmpl">
-      <select name="sam" data-placeholder="Select Sam" class="chzn-select" multiple style="width:350px;" tabindex="4">
-        <option value=""></option>
-        {% for sam in sams %}
-        <option value="{{ sam.file_name }}">{{ sam.file_name }}</option>
-        {% endfor %}
-      </select>
-    </script>
-    <script id="select-bed-tmpl" type="text/x-jquery-tmpl">
-      <select name="bed" data-placeholder="Select Bed" class="chzn-select" multiple style="width:350px;" tabindex="4">
-        {% for bed in beds %}
-        <option value="{{ bed.file_name }}">{{ bed.file_name }}</option>
-        {% endfor %}
-      </select>
     </script>
 
     <script type="text/javascript" src="/js/jquery.min.js"></script>
