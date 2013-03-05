@@ -53,7 +53,7 @@ def loadsam(args):
     db = SQLDB(args.dbname, args.dbhost, args.dbuser, args.dbpassword)
     for f in args.samfile:
         ngsvtools.samloader.load(f, db)
-        ngsvtools.histogramloader.run(f, db)
+        ngsvtools.histogramloader.load(f, db)
 
 
 def loadbed(args):

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 #
@@ -19,23 +18,19 @@
 # limitations under the License.
 #
 
-import sys
 import os.path
 import re
-import time
 
 import pysam
 
 import cypileup
-from sam.data.sql import SQLDB
 from sam.data.sam import Sam
 from sam.data.chromosome import Chromosome
 from sam.util import trim_chromosome_name
-from ngsvtools.config import SQLDB_HOST, SQLDB_USER, SQLDB_PASSWD, SAM_DB_NAME
 from exception import UnsupportedFileError
 
 
-def load(filepath, db):
+def _load_sam(filepath, db):
     filename = os.path.basename(filepath)
     base, ext = os.path.splitext(filepath)
 
@@ -59,8 +54,8 @@ def load(filepath, db):
     return samfile
 
 
-def run(filepath, db):
-    samfile = load(filepath, db)
+def load(filepath, db):
+    samfile = _load_sam(filepath, db)
 
     sam_data = Sam(db)
     chromosome_data = Chromosome(db)
@@ -86,25 +81,3 @@ def run(filepath, db):
     cypileup.pileup(samfile, chromosomes, samId, db)
 
     samfile.close()
-
-
-def main():
-    if len(sys.argv) < 2:
-        print("No input files")
-        sys.exit()
-
-    start1 = time.time()
-    start2 = time.clock()
-
-    files = sys.argv[1:]
-
-    db = SQLDB(SAM_DB_NAME, SQLDB_HOST, SQLDB_USER, SQLDB_PASSWD)
-
-    for f in files:
-        run(f, db)
-
-    print 'Real time: %d sec' % (time.time() - start1)
-    print 'CPU  time: %d sec' % (time.clock() - start2)
-
-if __name__ == '__main__':
-    main()

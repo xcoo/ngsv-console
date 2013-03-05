@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 #
@@ -20,18 +19,15 @@
 #
 
 from types import NoneType
-import sys
 import os.path
 
 from celery import current_task
 
 import pybed
 
-from sam.data.sql import SQLDB
 from sam.data.chromosome import Chromosome
 from sam.data.bed import Bed
 from sam.data.bedfragment import BedFragment
-from ngsvtools.config import SQLDB_HOST, SQLDB_USER, SQLDB_PASSWD, SAM_DB_NAME
 from exception import AlreadyLoadedError, UnsupportedFileError
 
 
@@ -114,20 +110,3 @@ def load(filepath, db):
                     meta={'progress': (count + 1) * 100 / bedfile.length})
 
     print "loaded %d fragments" % count
-
-
-def main():
-
-    if len(sys.argv) < 2:
-        print("No input files")
-        sys.exit()
-
-    files = sys.argv[1:]
-
-    db = SQLDB(SAM_DB_NAME, SQLDB_HOST, SQLDB_USER, SQLDB_PASSWD)
-
-    for f in files:
-        load(f, db)
-
-if __name__ == '__main__':
-    main()

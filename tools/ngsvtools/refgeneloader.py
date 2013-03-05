@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 #
@@ -23,10 +22,8 @@ import sys
 import gzip
 
 from cache import Cache
-from sam.data.sql import SQLDB
 from sam.data.chromosome import Chromosome
 from sam.data.refgene import RefGene
-from config import SQLDB_HOST, SQLDB_USER, SQLDB_PASSWD, SAM_DB_NAME
 
 
 def _update_database(fp, refgene_data, chromosome_data):
@@ -115,11 +112,3 @@ def load(db):
     _update_database(f, refgene_data, chromosome_data)
 
     f.close()
-
-
-def main():
-    db = SQLDB(SAM_DB_NAME, SQLDB_HOST, SQLDB_USER, SQLDB_PASSWD)
-    load(db)
-
-if __name__ == '__main__':
-    main()

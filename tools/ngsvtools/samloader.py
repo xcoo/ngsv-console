@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 #
@@ -19,17 +18,14 @@
 # limitations under the License.
 #
 
-import sys
 import os.path
 import re
 
 import pysam
 
-from sam.data.sql import SQLDB
 from sam.data.sam import Sam
 from sam.data.chromosome import Chromosome
 from sam.util import trim_chromosome_name
-from ngsvtools.config import SQLDB_HOST, SQLDB_USER, SQLDB_PASSWD, SAM_DB_NAME
 from exception import AlreadyLoadedError, UnsupportedFileError
 
 
@@ -71,22 +67,3 @@ def load(filepath, db):
     # load chromosome
     for ref in samfile.references:
         chr_data.append(trim_chromosome_name(ref))
-
-    return
-
-
-def main():
-    if len(sys.argv) < 2:
-        print("No input files")
-        sys.exit()
-
-    files = sys.argv[1:]
-
-    db = SQLDB(SAM_DB_NAME, SQLDB_HOST, SQLDB_USER, SQLDB_PASSWD)
-
-    for f in files:
-        load(f, db)
-
-
-if __name__ == '__main__':
-    main()
