@@ -50,7 +50,7 @@ def load_sam(sam_file, db_name, db_host, db_user, db_password):
 
     current_task.update_state(state='PROGRESS', meta={'progress': 50})
 
-    ngsvtools.histogramloader.run(sam_file, db)
+    ngsvtools.histogramloader.load(sam_file, db)
 
     if sam_already_loaded:
         return {'state': 'SUCCESS_WITH_ALERT', 'alert': alert}

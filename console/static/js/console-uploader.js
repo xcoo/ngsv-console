@@ -28,14 +28,12 @@ console.uploader = console.uploader || {};
         var upload = $.format('sam-upload_%02d', id);
         var cover = $.format('sam-upload-cover_%02d', id);
         var btn = $.format('sam-upload-btn_%02d', id);
-        var cancel = $.format('sam-upload-cancel_%02d', id);
         var progress = $.format('sam-upload-progress_%02d', id);
 
         var $e = $('#new-sam-tmpl').tmpl({
             upload: upload,
             cover: cover,
             btn: btn,
-            cancel: cancel,
             progress: progress });
         $e.prependTo('#new-task').hide().fadeIn(200);
 
@@ -45,10 +43,8 @@ console.uploader = console.uploader || {};
 
         console.uploader.initUploader('/api/upload-sam', $('#' + upload), $('#' + btn), $('#' + progress));
 
-        $('#' + cancel).click(function() {
-            $e.fadeOut(200, function() {
-                $(this).remove();
-            });
+        $e.find('button.close').click(function() {
+            $e.fadeOut(200, function() { $(this).remove(); });
         });
     };
 
@@ -63,14 +59,12 @@ console.uploader = console.uploader || {};
         var upload = $.format('bed-upload_%02d', id);
         var cover = $.format('bed-upload-cover_%02d', id);
         var btn = $.format('bed-upload-btn_%02d', id);
-        var cancel = $.format('bed-upload-cancel_%02d', id);
         var progress = $.format('bed-upload-progress_%02d', id);
 
         var $e =  $('#new-bed-tmpl').tmpl({
             upload: upload,
             cover: cover,
             btn: btn,
-            cancel: cancel,
             progress: progress });
         $e.prependTo('#new-task').hide().fadeIn(200);
 
@@ -80,10 +74,8 @@ console.uploader = console.uploader || {};
 
         console.uploader.initUploader('/api/upload-bed', $('#' + upload), $('#' + btn), $('#' + progress));
 
-        $('#' + cancel).click(function() {
-            $e.fadeOut(200, function() {
-                $(this).remove();
-            });
+        $e.find('button.close').click(function() {
+            $e.fadeOut(200, function() { $(this).remove(); });
         });
     };
 

@@ -40,6 +40,20 @@
       </div>
     </div>
 
+    <!-- Display warning modal if viewer has not launched -->
+    <div id="viewer-enable-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-header">
+        <h3>Warning</h3>
+      </div>
+      <div class="modal-body">
+        <p>Not found NGSV...</p>
+        <p>Launch NGSV and use viewer manager.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+      </div>
+    </div>
+
     <div id="main" class="container">
       <div class="row">
         <div class="span12">
@@ -75,7 +89,10 @@
           <input type="text" id="chr-start" class="input-small" placeholder="Start position" value="0">
           to
           <input type="text" id="chr-end" class="input-small" placeholder="End position" value="900000">
-          <button id="viewer-select-btn" class="btn btn-primary">Select</button>
+
+          <div class="form-actions">
+            <button id="viewer-select-btn" class="btn btn-primary">Select</button>
+          </div>
         </div>
       </div>
     </div>
@@ -83,8 +100,13 @@
     {% include 'footer.html' %}
 
     <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
     <script type="text/javascript">
       var HOSTNAME = "{{ hostname }}";
+
+      {% if not viewer_enable %}
+      $('#viewer-enable-modal').modal();
+      {% endif %}
     </script>
     <script type="text/javascript" src="/js/console-viewer.js"></script>
   </body>

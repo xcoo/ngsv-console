@@ -30,7 +30,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
 
-from db.tag import TagRef
+from db.tag import BedTag
 
 Base = declarative_base()
 
@@ -90,9 +90,21 @@ class BedDao():
 
     def get_by_tag(self, tag):
         session = scoped_session(sessionmaker(bind=self._engine))
-        query = session.query(Bed)\
-            .join(TagRef, TagRef.tag_id == tag.tag_id)\
-            .filter(Bed.bed_id == TagRef.bed_id)
+        query = session.query(Bed) \
+            .join(BedTag, BedTag.tag_id == tag.tag_id) \
+            .filter(Bed.bed_id == BedTag.bed_id)
+        try:
+            return query.all()
+        except NoResultFound:
+            return None
+        finally:
+            session.close()
+
+    def get_by_tag_id(self, tag_id):
+        session = scoped_session(sessionmaker(bind=self._engine))
+        query = session.query(Bed) \
+            .join(BedTag, BedTag.tag_id == tag_id) \
+            .filter(Bed.bed_id == BedTag.bed_id)
         try:
             return query.all()
         except NoResultFound:

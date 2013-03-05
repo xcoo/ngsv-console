@@ -37,16 +37,20 @@ from ngsvtools.sam.data.sql import SQLDB
 
 def initdb(args):
     sql = resource_string('ngsvtools', 'data/ngsv.sql')
+    _source(sql, args.dbuser, args.dbpassword)
 
+    sql = resource_string('ngsvtools', 'data/cnv.sql')
+    _source(sql, args.dbuser, args.dbpassword)
+
+
+def _source(sql, dbuser, dbpassword):
     fd, path = tempfile.mkstemp()
     os.write(fd, sql)
     os.close(fd)
-
-    cmd = 'mysql --user=%s --password=%s < %s' % (args.dbuser,
-                                                  args.dbpassword,
+    cmd = 'mysql --user=%s --password=%s < %s' % (dbuser,
+                                                  dbpassword,
                                                   path)
     os.system(cmd)
-
     os.remove(path)
 
 
@@ -54,7 +58,7 @@ def loadsam(args):
     db = SQLDB(args.dbname, args.dbhost, args.dbuser, args.dbpassword)
     for f in args.samfile:
         ngsvtools.samloader.load(f, db)
-        ngsvtools.histogramloader.run(f, db)
+        ngsvtools.histogramloader.load(f, db)
 
 
 def loadbed(args):

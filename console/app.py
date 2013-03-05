@@ -178,7 +178,8 @@ def viewer():
                            sams=sam_dao.all(),
                            beds=bed_dao.all(),
                            chrs=chrs,
-                           hostname=conf.host)
+                           hostname=conf.host,
+                           viewer_enable=viewer_enable(request.remote_addr))
 
 
 @app.route('/download')
@@ -274,7 +275,6 @@ def upload_bed():
     return redirect('/upload')
 
 
-@app.route('/api/upload-cnv', methods=['POST'])
 def upload_cnv():
     f = request.files['file']
     if f and allowed_file(f.filename, ['rawcnv', 'cnv']):
@@ -292,8 +292,8 @@ def upload_cnv():
     return redirect('/upload')
 
 
-@app.route('/api/newtag', methods=['POST'])
-def newtag():
+@app.route('/api/tag/new', methods=['POST'])
+def tag_new():
     tag_name = request.form['tag-name']
     if not tag_name:
         return redirect('/manager')
@@ -301,23 +301,72 @@ def newtag():
     tag_dao = TagDao(engine)
 
     try:
-        sam_filename = request.form['sam']
-        print sam_filename
-        if sam_filename:
-            sam_dao = SamDao(engine)
+        sam_filenames = request.form.getlist('sam')
+        sam_dao = SamDao(engine)
+        for sam_filename in sam_filenames:
             sam = sam_dao.get_by_filename(sam_filename)
             tag_dao.add_tag_with_sam(tag_name, sam)
     except KeyError:
         pass
 
     try:
-        bed_filename = request.form['bed']
-        if bed_filename:
-            bed_dao = BedDao(engine)
+        bed_filenames = request.form.getlist('bed')
+        bed_dao = BedDao(engine)
+        for bed_filename in bed_filenames:
             bed = bed_dao.get_by_filename(bed_filename)
             tag_dao.add_tag_with_bed(tag_name, bed)
     except KeyError:
         pass
+
+    return redirect('/manager')
+
+
+@app.route('/api/tag/update', methods=['POST'])
+def tag_update():
+    tag_id = request.form['tag-id']
+    if not tag_id:
+        return redirect('/manager')
+
+    tag_dao = TagDao(engine)
+    tag = tag_dao.get_by_id(tag_id)
+
+    try:
+        req_filenames = request.form.getlist('sam')
+        sam_dao = SamDao(engine)
+        for sam in sam_dao.get_by_tag_id(tag_id):
+            if not sam.file_name in req_filenames:
+                tag_dao.remove_sam(sam, tag)
+        for filename in req_filenames:
+            sam = sam_dao.get_by_filename(filename)
+            tag_dao.add_tag_with_sam(tag.name, sam)
+        tag_dao.update_tag_date(tag_id)
+    except KeyError:
+        pass
+
+    try:
+        req_filenames = request.form.getlist('bed')
+        bed_dao = BedDao(engine)
+        for bed in bed_dao.get_by_tag_id(tag_id):
+            if not bed.file_name in req_filenames:
+                tag_dao.remove_bed(bed, tag)
+        for filename in req_filenames:
+            bed = bed_dao.get_by_filename(filename)
+            tag_dao.add_tag_with_bed(tag.name, bed)
+        tag_dao.update_tag_date(tag_id)
+    except KeyError:
+        pass
+
+    return redirect('/manager')
+
+
+@app.route('/api/tag/remove', methods=['POST'])
+def tag_remove():
+    tag_id = request.form['tag-id']
+    if not tag_id:
+        return redirect('/manager')
+    print 'remove tag'
+    tag_dao = TagDao(engine)
+    tag_dao.remove_by_id(tag_id)
 
     return redirect('/manager')
 
@@ -350,7 +399,7 @@ def ws_send_config():
 
     while True:
         src = ws.receive()
-        print src
+#        print src
         if src is None:
             break
         if ip in ws_viewer_sockets:
@@ -365,6 +414,10 @@ def ws_send_config():
 def allowed_file(filename, extensions):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in extensions
+
+
+def viewer_enable(ip):
+    return ip in ws_viewer_sockets
 
 
 def run():

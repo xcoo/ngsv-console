@@ -6,6 +6,7 @@
     <title>Manager | NGSV Console</title>
 
     <link type="text/css" href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link type="text/css" href="/css/chosen.css" rel="stylesheet" />
     <link type="text/css" href="/css/main.css" rel="stylesheet" />
 
     <link rel="shortcut icon" href="/img/favicon.ico">
@@ -53,40 +54,53 @@
       </div>
 
       <div class="row">
-        <div class="span12" id="old-tag">
+        <div class="span12" id="registered-tags">
           {% for tag in tags %}
-          <div class="row">
+          <div class="row old-tag" data-tag-id="{{ tag.tag.tag_id }}">
             <div class="span12 tag-block">
-              <form method="post" action="/api/newtag">
-                <h3>{{ tag.tag.name }}</h3>
-                <div class="select-data" style="float: left; margin-right: 5px">
+              <h3>{{ tag.tag.name }}</h3>
+
+              <form method="post" action="/api/tag/update" class="form-horizontal" id="update-{{ tag.tag.tag_id }}">
+                <input type="hidden" name="tag-id" value="{{ tag.tag.tag_id }}">
+                {% if sams %}
+                <div class="control-group">
+                  <label class="control-label">Sam/Bam</label>
+                  <div class="controls">
+                    <select name="sam" data-placeholder="Select Sam" class="chzn-select" multiple autocomplete="off" style="width: 450px;" tabindex="4">
+                      {% for sam in sams %}
+                      <option value="{{ sam.file_name }}">{{ sam.file_name }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
                 </div>
+                {% endif %}
 
-                {% for sam in tag.sams %}
-                <p>{{ sam.file_name }}</p>
-                {% endfor %}
-
-                {% for bed in tag.beds %}
-                <p>{{ bed.file_name }}</p>
-                {% endfor %}
-
-                <div class="btn-group">
-                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                    Add
-                    <span class="caret"></span>
-                  </a>
-                  <ul class="dropdown-menu">
-                    <li><a class="add-sam">Add sam</a></li>
-                    <li><a class="add-bed">Add bed</a></li>
-                  </ul>
+                {% if beds %}
+                <div class="control-group">
+                  <label class="control-label">Bed</label>
+                  <div class="controls">
+                    <select name="bed" data-placeholder="Select Bed" class="chzn-select" multiple autocomplete="off" style="width: 450px;" tabindex="4">
+                      {% for bed in beds %}
+                      <option value="{{ bed.file_name }}">{{ bed.file_name }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
                 </div>
-
-                <div class="btn-toolbar">
-                  <!--              <button id="%s" class="btn btn-primary"> -->
-                  <input type="submit" value="Update" class="btn btn-primary">
-                  <!--              </button> -->
-                </div>
+                {% endif %}
               </form>
+
+              <form method="post" action="/api/tag/remove" id="remove-{{ tag.tag.tag_id }}">
+                <input type="hidden" name="tag-id" value="{{ tag.tag.tag_id }}">
+              </form>
+
+              <div class="form-actions" style="padding-left: 180px">
+                <button class="btn btn-primary" onclick="$('#update-{{ tag.tag.tag_id }}').submit()">
+                  Update
+                </button>
+                <button class="btn btn-danger" onclick="removeTag('{{ tag.tag.name }}', $('#remove-{{ tag.tag.tag_id }}'))" style="float: right;">
+                  Remove
+                </button>
+              </div>
             </div>
           </div>
           {% endfor %}
@@ -100,52 +114,84 @@
     <script id="new-tag-tmpl" type="text/x-jquery-tmpl">
       <div class="row">
         <div class="span12 tag-block">
-          <form method="post" action="/api/newtag">
-            <h3>New Tag</h3>
-            <input class="input-medium" type="text" name="tag-name" placeholder="Tag" autocomplete="off">
-            <br />
-
-            <div class="select-data" style="float: left; margin-right: 5px">
+          <button type="button" class="close">&times;</button>
+          <h3>New Tag</h3>
+          <form method="post" action="/api/tag/new" class="form-horizontal">
+            <div class="control-group">
+              <label class="control-label" for="inputEmail">Tag</label>
+              <div class="controls">
+                <input class="input-medium" type="text" name="tag-name" placeholder="Tag name" autocomplete="off">
+              </div>
             </div>
 
-            <div class="btn-group">
-              <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                Add
-                <span class="caret"></span>
-              </a>
-              <ul class="dropdown-menu">
-                <li><a class="add-sam">Add sam</a></li>
-                <li><a class="add-bed">Add bed</a></li>
-              </ul>
+            {% if sams %}
+            <div class="control-group">
+              <label class="control-label" for="inputEmail">Sam/Bam</label>
+              <div class="controls">
+                <select name="sam" data-placeholder="Select Sam" class="chzn-select" multiple autocomplete="off" style="width: 450px;" tabindex="4">
+                  <option value=""></option>
+                  {% for sam in sams %}
+                  <option value="{{ sam.file_name }}">{{ sam.file_name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
             </div>
+            {% endif %}
 
-            <div class="btn-toolbar">
-              <!--              <button id="%s" class="btn btn-primary"> -->
-              <input type="submit" value="Create" class="btn btn-primary">
-              <!--              </button> -->
+            {% if beds %}
+            <div class="control-group">
+              <label class="control-label" for="inputEmail">Bed</label>
+              <div class="controls">
+                <select name="bed" data-placeholder="Select Bed" class="chzn-select" multiple autocomplete="off" style="width: 450px;" tabindex="4">
+                  <option value=""></option>
+                  {% for bed in beds %}
+                  <option value="{{ bed.file_name }}">{{ bed.file_name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            {% endif %}
+
+            <div class="form-actions" style="padding-left: 180px">
+              <button type="submit" class="btn btn-primary">
+                Create
+              </button>
             </div>
           </form>
         </div>
       </div>
     </script>
-    <script id="select-sam-tmpl" type="text/x-jquery-tmpl">
-      <select name="sam">
-        {% for sam in sams %}
-        <option>{{ sam.file_name }}</option>
-        {% endfor %}
-      </select>
-    </script>
-    <script id="select-bed-tmpl" type="text/x-jquery-tmpl">
-      <select name="bed">
-        {% for bed in beds %}
-        <option>{{ bed.file_name }}</option>
-        {% endfor %}
-      </select>
-    </script>
 
     <script type="text/javascript" src="/js/jquery.min.js"></script>
     <script type="text/javascript" src="/js/jquery.tmpl.min.js"></script>
     <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/js/chosen.jquery.js"></script>
+
+    <script type="text/javascript">
+      var tags = {};
+      (function() {
+          {% for tag in tags %}
+          var tag = {};
+
+          tag.samFileNames = [];
+          {% for sam in tag.sams %}
+          tag.samFileNames.push('{{ sam.file_name }}');
+          {% endfor %}
+
+          tag.bedFileNames = [];
+          {% for bed in tag.beds %}
+          tag.bedFileNames.push('{{ bed.file_name }}');
+          {% endfor %}
+          tags['{{ tag.tag.tag_id }}'] = tag;
+          {% endfor %}
+      })();
+
+      function removeTag(tag, button) {
+          if (confirm('Are you sure you want to remove tag "' + tag + '"?'))
+              button.submit();
+      }
+    </script>
+
     <script type="text/javascript" src="/js/console-manager.js"></script>
   </body>
 </html>

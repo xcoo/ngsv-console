@@ -18,13 +18,19 @@
 # limitations under the License.
 #
 
+__author__ = 'Toshiki Takeuchi'
+__copyright__ = 'Copyright (C) 2012, Xcoo, Inc.'
+__license__ = 'Apache License 2.0'
+__maintainer__ = 'Toshiki Takeuchi'
+__email__ = 'developer@xcoo.jp'
+
 from sqlalchemy import Column
 from sqlalchemy import Integer, BigInteger, String, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
 
-from db.tag import TagRef
+from db.tag import SamTag
 
 Base = declarative_base()
 
@@ -86,9 +92,21 @@ class SamDao():
 
     def get_by_tag(self, tag):
         session = scoped_session(sessionmaker(bind=self._engine))
-        query = session.query(Sam)\
-            .join(TagRef, TagRef.tag_id == tag.tag_id)\
-            .filter(Sam.sam_id == TagRef.sam_id)
+        query = session.query(Sam) \
+            .join(SamTag, SamTag.tag_id == tag.tag_id) \
+            .filter(Sam.sam_id == SamTag.sam_id)
+        try:
+            return query.all()
+        except NoResultFound:
+            return None
+        finally:
+            session.close()
+
+    def get_by_tag_id(self, tag_id):
+        session = scoped_session(sessionmaker(bind=self._engine))
+        query = session.query(Sam) \
+            .join(SamTag, SamTag.tag_id == tag_id) \
+            .filter(Sam.sam_id == SamTag.sam_id)
         try:
             return query.all()
         except NoResultFound:

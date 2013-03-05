@@ -176,50 +176,40 @@ ENGINE = MyISAM;
 DROP TABLE IF EXISTS `ngsv`.`tag` ;
 
 CREATE  TABLE IF NOT EXISTS `ngsv`.`tag` (
-  `tag_id` INT NOT NULL AUTO_INCREMENT ,
+  `tag_id` BIGINT NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(255) NOT NULL ,
+  `created_at` DATETIME NOT NULL ,
+  `updated_at` DATETIME NOT NULL ,
   PRIMARY KEY (`tag_id`) ,
   UNIQUE INDEX `name_UNIQUE` (`name` ASC) )
 ENGINE = MyISAM;
 
 
 -- -----------------------------------------------------
--- Table `ngsv`.`tag_ref`
+-- Table `ngsv`.`sam_tag`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `ngsv`.`tag_ref` ;
+DROP TABLE IF EXISTS `ngsv`.`sam_tag` ;
 
-CREATE  TABLE IF NOT EXISTS `ngsv`.`tag_ref` (
-  `tag_ref_id` INT NOT NULL AUTO_INCREMENT ,
-  `tag_id` INT NOT NULL ,
-  `sam_id` BIGINT NULL ,
-  `bed_id` BIGINT NULL ,
-  PRIMARY KEY (`tag_ref_id`) ,
-  UNIQUE INDEX `tag_ref_unique` (`tag_id` ASC, `sam_id` ASC, `bed_id` ASC) ,
+CREATE  TABLE IF NOT EXISTS `ngsv`.`sam_tag` (
+  `tag_id` BIGINT NOT NULL ,
+  `sam_id` BIGINT NOT NULL ,
   INDEX `fk_tag_id_idx` (`tag_id` ASC) ,
   INDEX `fk_sam_id_idx` (`sam_id` ASC) ,
-  INDEX `fk_bed_id_idx` (`bed_id` ASC) )
+  PRIMARY KEY (`tag_id`, `sam_id`) )
 ENGINE = MyISAM;
 
 
 -- -----------------------------------------------------
--- Table `ngsv`.`cnv`
+-- Table `ngsv`.`bed_tag`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `ngsv`.`cnv` ;
+DROP TABLE IF EXISTS `ngsv`.`bed_tag` ;
 
-CREATE  TABLE IF NOT EXISTS `ngsv`.`cnv` (
-  `cnv_id` BIGINT NOT NULL AUTO_INCREMENT ,
-  `file_name` VARCHAR(1024) NOT NULL ,
-  `chr_id` BIGINT NOT NULL ,
-  `chr_start` BIGINT NOT NULL ,
-  `chr_end` BIGINT NOT NULL ,
-  `lengths` TEXT NOT NULL ,
-  `state` VARCHAR(45) NOT NULL ,
-  `copy_number` BIGINT NOT NULL ,
-  `num_snp` BIGINT NOT NULL ,
-  `snp_start` VARCHAR(45) NOT NULL ,
-  `snp_end` VARCHAR(45) NOT NULL ,
-  PRIMARY KEY (`cnv_id`) ,
-  INDEX `fk_cnv_chromosome_idx_idx` (`chr_id` ASC) )
+CREATE  TABLE IF NOT EXISTS `ngsv`.`bed_tag` (
+  `tag_id` BIGINT NOT NULL ,
+  `bed_id` BIGINT NOT NULL ,
+  INDEX `fk_tag_id_idx` (`tag_id` ASC) ,
+  INDEX `fk_bed_id_idx` (`bed_id` ASC) ,
+  PRIMARY KEY (`tag_id`, `bed_id`) )
 ENGINE = MyISAM;
 
 

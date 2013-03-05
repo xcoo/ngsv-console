@@ -41,4 +41,4 @@ setup(
     ext_modules=[Extension('ngsvtools.cypileup', ['ngsvtools/cypileup.pyx'])],
     scripts=['scripts/ngsv'],
     packages=['ngsvtools', 'ngsvtools.sam', 'ngsvtools.sam.data'],
-    package_data={'ngsvtools': ['data/ngsv.sql']})
+    package_data={'ngsvtools': ['data/ngsv.sql', 'data/cnv.sql']})
