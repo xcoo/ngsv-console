@@ -158,7 +158,8 @@ def viewer():
                            sams=sam_dao.all(),
                            beds=bed_dao.all(),
                            chrs=chrs,
-                           hostname=conf.host)
+                           hostname=conf.host,
+                           viewer_enable=viewer_enable(request.remote_addr))
 
 
 @app.route('/download')
@@ -352,7 +353,7 @@ def ws_send_config():
 
     while True:
         src = ws.receive()
-        print src
+#        print src
         if src is None:
             break
         if ip in ws_viewer_sockets:
@@ -367,6 +368,10 @@ def ws_send_config():
 def allowed_file(filename, extensions):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in extensions
+
+
+def viewer_enable(ip):
+    return ip in ws_viewer_sockets
 
 
 def run():
