@@ -97,7 +97,7 @@
                 <button class="btn btn-primary" onclick="$('#update-{{ tag.tag.tag_id }}').submit()">
                   Update
                 </button>
-                <button class="btn btn-danger" onclick="$('#remove-{{ tag.tag.tag_id }}').submit()" style="float: right;">
+                <button class="btn btn-danger" onclick="removeTag('{{ tag.tag.name }}', $('#remove-{{ tag.tag.tag_id }}'))" style="float: right;">
                   Remove
                 </button>
               </div>
@@ -185,6 +185,11 @@
           tags['{{ tag.tag.tag_id }}'] = tag;
           {% endfor %}
       })();
+
+      function removeTag(tag, button) {
+          if (confirm('Are you sure you want to remove tag "' + tag + '"?'))
+              button.submit();
+      }
     </script>
 
     <script type="text/javascript" src="/js/console-manager.js"></script>
