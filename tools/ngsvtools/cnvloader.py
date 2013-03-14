@@ -20,21 +20,30 @@
 #
 
 import logging
+import os.path
 import re
-import sys
 
-from ngsvtools.sam.data.sql import SQLDB
 from ngsvtools.sam.data.cnv import Cnv
+from ngsvtools.sam.data.cnvfragment import CnvFragment
 from ngsvtools.sam.data.chromosome import Chromosome
 from ngsvtools.sam.util import trim_chromosome_name
-from ngsvtools.config import SQLDB_HOST, SQLDB_USER, SQLDB_PASSWD, SAM_DB_NAME
+from ngsvtools.exception import AlreadyLoadedError
 
 
 def load(filepath, db):
+    filename = os.path.basename(filepath)
+
     cnv_data = Cnv(db)
+    cnv_fragment_data = CnvFragment(db)
     chromosome_data = Chromosome(db)
 
+    if cnv_data.get_by_filename(filename) is not None:
+        raise AlreadyLoadedError('WARNING: Already loaded "%s"' % filename)
+
     logging.info('begin to load rpkm data from %s' % filepath)
+
+    cnv_data.append(filename)
+    cnv = cnv_data.get_by_filename(filename)
 
     line_count = 0
     cnt = 0
@@ -72,8 +81,6 @@ def load(filepath, db):
             state = m.group(1)
             copy_number = long(m.group(2))
 
-            filename = row[4]
-
             r = re.compile('startsnp=(\w+)')
             m = r.search(row[5])
             startsnp = m.group(1)
@@ -82,27 +89,12 @@ def load(filepath, db):
             m = r.search(row[6])
             endsnp = m.group(1)
 
-            cnv_data.append(filename, chr_id, chr_start, chr_end, length,
-                            state, copy_number, numsnp, startsnp, endsnp)
+            cnv_fragment_data.append(cnv['id'], chr_id, chr_start, chr_end,
+                                     length, state, copy_number, numsnp,
+                                     startsnp, endsnp)
             cnt += 1
 
         line_count += 1
 
     logging.info('read lines: %d' % line_count)
     logging.info('loaded cnv: %d' % cnt)
-
-
-def main():
-    if len(sys.argv) < 2:
-        print 'Usage: %s file' % __file__
-        sys.exit()
-
-    logging.basicConfig(level=logging.DEBUG)
-    filepath = sys.argv[1]
-
-    db = SQLDB(SAM_DB_NAME, SQLDB_HOST, SQLDB_USER, SQLDB_PASSWD)
-
-    load(filepath, db)
-
-if __name__ == '__main__':
-    main()

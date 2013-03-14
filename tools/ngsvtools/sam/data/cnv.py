@@ -18,25 +18,31 @@
 # limitations under the License.
 #
 
+from sql import get_time, escape
+
 
 class Cnv:
 
     def __init__(self, db):
         self.db = db
 
-    def append(self, filename, chr_id, chr_start, chr_end, lengths, state,
-               copy_number, num_snp, snp_start, snp_end):
-        SQL_TEMPLATE = u"INSERT INTO cnv (file_name, chr_id, chr_start, chr_end, lengths, state, copy_number, num_snp, snp_start, snp_end) VALUES ('%s', %d, %d, %d, '%s', '%s', %d, %d, '%s','%s')"
+    def append(self, filename):
+        SQL_TEMPLATE = u"INSERT INTO cnv (file_name, created_date) " \
+            u"VALUES ('%s', %d)"
 
-        sql = SQL_TEMPLATE % (filename,
-                              chr_id,
-                              chr_start,
-                              chr_end,
-                              lengths,
-                              state,
-                              copy_number,
-                              num_snp,
-                              snp_start,
-                              snp_end)
+        sql = SQL_TEMPLATE % (filename, get_time())
 
         self.db.execute(sql)
+
+    def get_by_filename(self, filename):
+        sql = u"SELECT cnv_id, file_name, created_date FROM cnv " \
+            u"WHERE file_name = '%s'" % escape(filename)
+
+        result = self.db.execute(sql)
+
+        if len(result) > 0:
+            return {'id': result[0][0],
+                    'name': result[0][1],
+                    'created': result[0][2]}
+        else:
+            return None
