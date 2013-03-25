@@ -165,6 +165,7 @@ def upload():
 def viewer():
     sam_dao = SamDao(engine)
     bed_dao = BedDao(engine)
+    cnv_dao = CnvDao(engine)
     cytoband_dao = CytobandDao(engine)
     chromosome_dao = ChromosomeDao(engine)
 
@@ -177,6 +178,7 @@ def viewer():
     return render_template('viewer.html',
                            sams=sam_dao.all(),
                            beds=bed_dao.all(),
+                           cnvs=cnv_dao.all(),
                            chrs=chrs,
                            hostname=conf.host,
                            viewer_enable=viewer_enable(request.remote_addr))

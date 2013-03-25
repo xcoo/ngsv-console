@@ -11,7 +11,7 @@ jQuery.extend({
         } else {
             // recurse array or object
             var n, v, json = [], arr = (obj && obj.constructor == Array);
- 
+
             for (n in obj) {
                 v = obj[n];
                 t = typeof(v);
@@ -26,14 +26,14 @@ jQuery.extend({
 });
 
 (function() {
-    
+
     console.viewer.ws = undefined;
 
     console.viewer.main = function() {
-        console.viewer.ws = new WebSocket('ws://' + HOSTNAME + ':5000/api/ws/send-config')
+        console.viewer.ws = new WebSocket('ws://' + HOSTNAME + ':5000/api/ws/send-config');
 
         $('#viewer-select-btn').click(function() {
-            var data = {'bam': [], 'bed': [], 'chromosome': {}};
+            var data = {'bam': [], 'bed': [], 'cnv': [], 'chromosome': {}};
 
             $('input:checked').each(function() {
                 if ($(this).attr('type') == 'checkbox') {
@@ -45,6 +45,12 @@ jQuery.extend({
                     }
                     if ($(this).attr('name') == 'bed') {
                         data.bed.push({
+                            'name': $(this).attr('name'),
+                            'id': $(this).val()
+                        });
+                    }
+                    if ($(this).attr('name') == 'cnv') {
+                        data.cnv.push({
                             'name': $(this).attr('name'),
                             'id': $(this).val()
                         });

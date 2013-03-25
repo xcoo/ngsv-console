@@ -79,6 +79,17 @@
           <p class="text-warning">Not found</p>
           {% endif %}
 
+          <h3>Cnv</h3>
+          {% for cnv in cnvs %}
+          <label class="checkbox">
+            <input type="checkbox" name="cnv" value="{{ cnv.cnv_id }}">
+            {{ cnv.file_name }}
+          </label>
+          {% endfor %}
+          {% if not cnvs %}
+          <p class="text-warning">Not found</p>
+          {% endif %}
+
           <h3>Chromosome</h3>
           <select id="chr-select">
             {% for chr in chrs %}

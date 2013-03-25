@@ -25,7 +25,7 @@ __maintainer__ = 'Toshiki Takeuchi'
 __email__ = 'developer@xcoo.jp'
 
 from sqlalchemy import Column
-from sqlalchemy import BigInteger, String, Text
+from sqlalchemy import BigInteger, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
@@ -39,30 +39,17 @@ class Cnv(Base):
 
     cnv_id = Column(BigInteger, primary_key=True, autoincrement=True)
     file_name = Column(String(1024), nullable=False)
-    chr_id = Column(BigInteger, nullable=False)
-    chr_start = Column(BigInteger, nullable=False)
-    chr_end = Column(BigInteger, nullable=False)
-    lengths = Column(Text, nullable=False)
-    state = Column(String(45), nullable=False)
-    copy_number = Column(BigInteger, nullable=False)
-    num_snp = Column(BigInteger, nullable=False)
-    snp_start = Column(String(45), nullable=False)
-    snp_end = Column(String(45), nullable=False)
+    created_date = Column(BigInteger, nullable=False)
 
-    def __init__(self, file_name, created_data, track_name, description,
-                 visibility, item_rgb):
+    def __init__(self, file_name, created_data):
         self.file_name = file_name
         self.created_data = created_data
-        self.track_name = track_name
-        self.description = description
-        self.visibility = visibility
-        self.item_rgb = item_rgb
 
     def __repr__(self):
         if self.bed_id is None:
-            return "<bed('%s')>" % (self.file_name)
+            return "<cnv('%s')>" % (self.file_name)
         else:
-            return "<bed('%d', '%s')>" % (self.bed_id, self.file_name)
+            return "<cnv('%d', '%s')>" % (self.bed_id, self.file_name)
 
 
 class CnvDao():
