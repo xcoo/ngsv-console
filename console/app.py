@@ -19,7 +19,9 @@
 # limitations under the License.
 #
 
+import datetime
 import os
+import os.path
 import sys
 from urlparse import urljoin
 
@@ -86,7 +88,57 @@ engine = create_engine(db_url, encoding='utf-8',
 
 @app.route('/')
 def root():
-    return render_template('main.html')
+    tag_dao = TagDao(engine)
+    sam_dao = SamDao(engine)
+    samfiles = []
+    for sam in sam_dao.all():
+        samfiles.append({
+            'type': 'sam',
+            'filename': sam.file_name,
+            'id': sam.sam_id,
+            'created_date': sam.created_date,
+            'tags': tag_dao.get_by_samid(sam.sam_id),
+            'url': urljoin(conf.upload_dir_url, sam.file_name),
+            'size': get_pretty_size(urljoin(conf.upload_dir, sam.file_name))})
+    bed_dao = BedDao(engine)
+    bedfiles = []
+    for bed in bed_dao.all():
+        bedfiles.append({
+            'type': 'bed',
+            'filename': bed.file_name,
+            'id': bed.bed_id,
+            'created_date': bed.created_date,
+            'tags': tag_dao.get_by_bedid(bed.bed_id),
+            'url': urljoin(conf.upload_dir_url, sam.file_name),
+            'size': get_pretty_size(urljoin(conf.upload_dir, bed.file_name))})
+
+    files = samfiles + bedfiles
+    files.sort(key=lambda x: x['created_date'], reverse=True)
+    for f in files:
+        dt = datetime.datetime.fromtimestamp(f['created_date'])
+        f['created_date'] = dt.strftime('%Y/%m/%d %H:%M')
+
+    tags = [{'id': tag.tag_id,
+             'name': tag.name} for tag in tag_dao.all()]
+
+    return render_template('main.html', files=files, tags=tags)
+
+
+def get_pretty_size(path):
+    size = os.path.getsize(path)
+    if size < 1000:
+        return '%dB' % size
+    elif size < 1000000:
+        return '%f.1KB' % (size / 1000.0)
+    elif size < 100000000:
+        return '%.1fMB' % (size / 1000000.0)
+    else:
+        return '%.1fGB' % (size / 1000000000.0)
+
+
+@app.route('/nav')
+def nav():
+    return render_template('nav.html')
 
 
 @app.route('/upload')
@@ -311,6 +363,44 @@ def tag_update():
         pass
 
     return redirect('/manager')
+
+
+@app.route('/api/tag/update-by-file', methods=['POST'])
+def tag_update_by_file():
+    filetype = request.form['type']
+    fileid = request.form['id']
+    tagids = [int(tag_id) for tag_id in request.form.getlist('tags')]
+    if not filetype or not fileid or not tagids:
+        return redirect('/')
+
+    tag_dao = TagDao(engine)
+    tags = []
+    if filetype == 'sam':
+        sam_dao = SamDao(engine)
+        sam = sam_dao.get_by_id(fileid)
+        tags = tag_dao.get_by_samid(sam.sam_id)
+        for tag in tags:
+            if not tag['id'] in tagids:
+                tag_dao.remove_sam_by_tag_id(sam, tag['id'])
+                tag_dao.update_tag_date(tag['id'])
+        for tag_id in tagids:
+            tag = tag_dao.get_by_id(tag_id)
+            tag_dao.add_tag_with_sam(tag.name, sam)
+            tag_dao.update_tag_date(tag_id)
+    elif filetype == 'bed':
+        bed_dao = BedDao(engine)
+        bed = bed_dao.get_by_id(fileid)
+        tags = tag_dao.get_by_bedid(bed.bed_id)
+        for tag in tags:
+            if not tag['id'] in tagids:
+                tag_dao.remove_bed_by_tag_id(bed, tag['id'])
+                tag_dao.update_tag_date(tag['id'])
+        for tag_id in tagids:
+            tag = tag_dao.get_by_id(tag_id)
+            tag_dao.add_tag_with_bed(tag.name, bed)
+            tag_dao.update_tag_date(tag_id)
+
+    return redirect('/')
 
 
 @app.route('/api/tag/remove', methods=['POST'])

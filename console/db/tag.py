@@ -173,6 +173,32 @@ class TagDao():
         finally:
             session.close()
 
+    def get_by_samid(self, sam_id):
+        session = scoped_session(sessionmaker(bind=self._engine))
+        query = session.query(Tag) \
+            .join(SamTag, SamTag.sam_id == sam_id) \
+            .filter(Tag.tag_id == SamTag.tag_id)
+        try:
+            return [{'id': tag.tag_id,
+                     'name': tag.name} for tag in query.all()]
+        except NoResultFound:
+            return None
+        finally:
+            session.close()
+
+    def get_by_bedid(self, bed_id):
+        session = scoped_session(sessionmaker(bind=self._engine))
+        query = session.query(Tag) \
+            .join(BedTag, BedTag.bed_id == bed_id) \
+            .filter(Tag.tag_id == BedTag.tag_id)
+        try:
+            return [{'id': tag.tag_id,
+                     'name': tag.name} for tag in query.all()]
+        except NoResultFound:
+            return None
+        finally:
+            session.close()
+
     def remove_by_id(self, tag_id):
         session = scoped_session(sessionmaker(bind=self._engine))
         try:
@@ -191,10 +217,28 @@ class TagDao():
         finally:
             session.close()
 
+    def remove_sam_by_tag_id(self, sam, tag_id):
+        session = scoped_session(sessionmaker(bind=self._engine))
+        query = session.query(SamTag).filter(
+            and_(SamTag.tag_id == tag_id, SamTag.sam_id == sam.sam_id))
+        try:
+            query.delete()
+        finally:
+            session.close()
+
     def remove_bed(self, bed, tag):
         session = scoped_session(sessionmaker(bind=self._engine))
         query = session.query(BedTag).filter(
             and_(BedTag.tag_id == tag.tag_id, BedTag.bed_id == bed.bed_id))
+        try:
+            query.delete()
+        finally:
+            session.close()
+
+    def remove_bed_by_tag_id(self, bed, tag_id):
+        session = scoped_session(sessionmaker(bind=self._engine))
+        query = session.query(BedTag).filter(
+            and_(BedTag.tag_id == tag_id, BedTag.bed_id == bed.bed_id))
         try:
             query.delete()
         finally:

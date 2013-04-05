@@ -80,6 +80,16 @@ class SamDao():
         finally:
             session.close()
 
+    def get_by_id(self, sam_id):
+        session = scoped_session(sessionmaker(bind=self._engine))
+        query = session.query(Sam).filter_by(sam_id=sam_id)
+        try:
+            return query.first()
+        except NoResultFound:
+            return None
+        finally:
+            session.close()
+
     def get_by_filename(self, filename):
         session = scoped_session(sessionmaker(bind=self._engine))
         query = session.query(Sam).filter_by(file_name=filename)
