@@ -3,7 +3,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-    <title>NGSV Console</title>
+    <title>Search | NGSV Console</title>
 
     <link type="text/css" href="/css/bootstrap.min.css" rel="stylesheet" />
     <link type="text/css" href="/css/chosen.css" rel="stylesheet" />
@@ -42,18 +42,38 @@
     </div>
 
     <div class="container">
-      <div class="row">
-        <div class="span4">
+      <div class="row-fluid">
+        <div class="span12">
           <form class="form-search" method="post" action="/api/search">
-            <div class="input-append">
-              <input type="text" name="query" class="span3 search-query" placeholder="Search by filename or tag">
-              <button type="submit" class="btn">Search</button>
+            <div class="row-fluid">
+              <div class="span4">
+                <div class="input-append">
+                  <input type="text" name="query" class="span12 search-query" placeholder="Search by filename or tag" value="{{ query }}">
+                  <button type="submit" class="btn">Search</button>
+                </div>
+              </div>
+            </div>
+            <div class="row-fluid" style="margin-top: 10px">
+              <div class="span12">
+                type:
+                <select name="type">
+                  <option>All</option>
+                  <option>Sam</option>
+                  <option>Bed</option>
+                </select>
+                <label class="checkbox">
+                  <input type="checkbox" name="filename">Filename
+                </label>
+                <label class="checkbox">
+                  <input type="checkbox" name="tag">Tag
+                </label>
+              </div>
             </div>
           </form>
         </div>
       </div>
 
-      <div class="row-fluid">
+      <div class="row-fluid" style="margin-top: 20px">
         <div class="span1"><strong>Type</strong></div>
         <div class="span4"><strong>Filename</strong></div>
         <div class="span4"><strong>Tags</strong></div>

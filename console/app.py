@@ -26,7 +26,7 @@ import sys
 from urlparse import urljoin
 
 from flask import Flask
-from flask import render_template, redirect, request
+from flask import render_template, redirect, request, url_for
 from werkzeug import SharedDataMiddleware
 from werkzeug import secure_filename
 from gevent import pywsgi
@@ -42,6 +42,7 @@ from db.cytoband import CytobandDao
 from db.tag import TagDao
 from taskserver.tasks import load_sam, load_bed
 from config import Config
+import util
 
 app = Flask(__name__)
 
@@ -99,7 +100,8 @@ def root():
             'created_date': sam.created_date,
             'tags': tag_dao.get_by_samid(sam.sam_id),
             'url': urljoin(conf.upload_dir_url, sam.file_name),
-            'size': get_pretty_size(urljoin(conf.upload_dir, sam.file_name))})
+            'size': util.get_pretty_size(urljoin(conf.upload_dir,
+                                                 sam.file_name))})
     bed_dao = BedDao(engine)
     bedfiles = []
     for bed in bed_dao.all():
@@ -110,7 +112,8 @@ def root():
             'created_date': bed.created_date,
             'tags': tag_dao.get_by_bedid(bed.bed_id),
             'url': urljoin(conf.upload_dir_url, sam.file_name),
-            'size': get_pretty_size(urljoin(conf.upload_dir, bed.file_name))})
+            'size': util.get_pretty_size(urljoin(conf.upload_dir,
+                                                 bed.file_name))})
 
     files = samfiles + bedfiles
     files.sort(key=lambda x: x['created_date'], reverse=True)
@@ -124,16 +127,15 @@ def root():
     return render_template('main.html', files=files, tags=tags)
 
 
-def get_pretty_size(path):
-    size = os.path.getsize(path)
-    if size < 1000:
-        return '%dB' % size
-    elif size < 1000000:
-        return '%f.1KB' % (size / 1000.0)
-    elif size < 100000000:
-        return '%.1fMB' % (size / 1000000.0)
-    else:
-        return '%.1fGB' % (size / 1000000000.0)
+@app.route('/search', methods=['GET'])
+def search():
+    q = request.args.get('q', '')
+
+    sam_dao = SamDao(engine)
+
+
+    query = q
+    return render_template('search.html', query=query)
 
 
 @app.route('/nav')
@@ -260,6 +262,12 @@ def manager():
 @app.route('/help')
 def help():
     return render_template('help.html')
+
+
+@app.route('/api/search', methods=['POST'])
+def api_search():
+    query = request.form['query']
+    return redirect(url_for('search', q=query))
 
 
 @app.route('/api/upload-sam', methods=['POST'])
