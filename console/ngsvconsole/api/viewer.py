@@ -18,6 +18,9 @@
 # limitations under the License.
 #
 
+from __future__ import absolute_import
+from __future__ import print_function
+
 from geventwebsocket import WebSocketError
 from flask import redirect, request
 
@@ -32,7 +35,7 @@ def ws_connect():
     ip = request.remote_addr
     ws = request.environ['wsgi.websocket']
     ws_viewer_sockets[ip] = ws
-    print 'Register: ', request.remote_addr
+    print('Register: ', request.remote_addr)
 
     while True:
         src = ws.receive()

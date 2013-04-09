@@ -18,6 +18,8 @@
 # limitations under the License.
 #
 
+from __future__ import absolute_import
+
 __author__ = 'Toshiki Takeuchi'
 __copyright__ = 'Copyright (C) 2012, Xcoo, Inc.'
 __license__ = 'Apache License 2.0'

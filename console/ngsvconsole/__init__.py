@@ -19,6 +19,8 @@
 #
 
 from __future__ import absolute_import
+from __future__ import print_function
+from __future__ import unicode_literals
 
 import os
 import os.path
@@ -38,9 +40,6 @@ app = Flask(__name__)
 try:
     ini = os.environ['NGSV_CONSOLE_CONFIG']
 except KeyError:
-    ini = os.path.join(os.path.dirname(__file__), '../config/ngsv.ini')
-
-if not os.path.isfile(ini):
     sys.exit('Not found "ngsv.ini"')
 
 conf = Config(ini)

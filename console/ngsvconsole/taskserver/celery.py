@@ -4,7 +4,7 @@
 #
 #   ngsv-console
 #   http://github.com/xcoo/ngsv-console
-#   Copyright (C) 2012, Xcoo, Inc.
+#   Copyright (C) 2012-2013, Xcoo, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
