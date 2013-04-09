@@ -10,7 +10,7 @@ def run():
     os.environ['NGSV_CONSOLE_CONFIG'] = os.path.join(os.path.dirname(__file__),
                                                      'config/ngsv.ini')
 
-    from app import app
+    from ngsvconsole import app
 
     if len(sys.argv) == 2 and sys.argv[1] == '--wsgi':
         print '''\

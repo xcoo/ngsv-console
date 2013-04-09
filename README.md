@@ -5,6 +5,7 @@
 * Python (v2.7)
     * pysam (>= v0.7)
     * Flask
+    * Flask-SQLAlchemy
     * gevent
     * gevent-websocket
     * Celery
@@ -63,14 +64,15 @@ Start MySQL and RabbitMQ.
 Start Celery.
 
 ```
-$ cd [ngsv dir]/console
+$ cd [ngsv dir]/console/ngsvconsole
 $ celery worker --app=taskserver -l info
 ```
 
 Start web server
 
 ```
-$ ./app.py --wsgi
+$ cd [ngsv dir]/console/
+$ ./run.py --wsgi
 ```
 
 Browse `http://localhost:5000`. And upload bam/bed files.

@@ -77,7 +77,7 @@
                 <input type="hidden" name="id" value="{{ f.id }}">
                 <select name="tags" data-placeholder="Select tag" class="chzn-select" multiple autocomplete="off" style="width: 100%;" tabindex="4">
                   {% for t in tags %}
-                  <option value="{{ t.id }}">{{ t.name }}</option>
+                  <option value="{{ t.tag_id }}">{{ t.name }}</option>
                   {% endfor %}
                 </select>
               </form>
@@ -110,7 +110,7 @@
           {% for f in files -%}
           tags = [];
           {% for t in f.tags %}
-          tags.push('{{ t.id }}');
+          tags.push('{{ t.tag_id }}');
           {% endfor %}
           tagInfos['{{ f.type }}-{{ f.id }}'] = tags;
           {%- endfor %}

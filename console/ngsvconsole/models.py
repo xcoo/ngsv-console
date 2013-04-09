@@ -29,7 +29,7 @@ import datetime
 from sqlalchemy import Column
 from sqlalchemy import Integer, BigInteger, String, Text, Date
 
-from app import db
+from ngsvconsole import db
 
 
 class Bed(db.Model):
