@@ -27,21 +27,16 @@ from urlparse import urljoin
 
 from flask import Flask
 from flask import render_template, redirect, request, url_for
+from flask.ext.sqlalchemy import SQLAlchemy
+from geventwebsocket import WebSocketError
 from werkzeug import SharedDataMiddleware
 from werkzeug import secure_filename
-from gevent import pywsgi
-from geventwebsocket import WebSocketHandler, WebSocketError
 from celery.result import BaseAsyncResult
 from celery.task.control import inspect
-from sqlalchemy import create_engine
+from sqlalchemy.exc import IntegrityError
 
-from db.sam import SamDao
-from db.bed import BedDao
-from db.chromosome import ChromosomeDao
-from db.cytoband import CytobandDao
-from db.tag import TagDao
-from taskserver.tasks import load_sam, load_bed
-from config import Config
+from app.taskserver.tasks import load_sam, load_bed
+from app.config import Config
 import util
 
 app = Flask(__name__)
@@ -79,18 +74,19 @@ def list_active_task():
 
 list_active_task()
 
-db_url = 'mysql://%s:%s@%s/%s?charset=utf8' % (conf.db_user,
-                                               conf.db_password,
-                                               conf.db_host,
-                                               conf.db_name)
-engine = create_engine(db_url, encoding='utf-8',
-                       convert_unicode=True, pool_recycle=3600)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://%s:%s@%s/%s?charset=utf8' \
+                                        % (conf.db_user,
+                                           conf.db_password,
+                                           conf.db_host,
+                                           conf.db_name)
+db = SQLAlchemy(app)
+from database.dao import SamDao, BedDao, ChromosomeDao, CytobandDao, TagDao
 
 
 @app.route('/')
 def root():
-    tag_dao = TagDao(engine)
-    sam_dao = SamDao(engine)
+    tag_dao = TagDao()
+    sam_dao = SamDao()
     samfiles = []
     for sam in sam_dao.all():
         samfiles.append({
@@ -102,7 +98,7 @@ def root():
             'url': urljoin(conf.upload_dir_url, sam.file_name),
             'size': util.get_pretty_size(urljoin(conf.upload_dir,
                                                  sam.file_name))})
-    bed_dao = BedDao(engine)
+    bed_dao = BedDao()
     bedfiles = []
     for bed in bed_dao.all():
         bedfiles.append({
@@ -131,7 +127,7 @@ def root():
 def search():
     q = request.args.get('q', '')
 
-    sam_dao = SamDao(engine)
+    sam_dao = SamDao()
 
 
     query = q
@@ -197,10 +193,10 @@ def upload():
 
 @app.route('/viewer')
 def viewer():
-    sam_dao = SamDao(engine)
-    bed_dao = BedDao(engine)
-    cytoband_dao = CytobandDao(engine)
-    chromosome_dao = ChromosomeDao(engine)
+    sam_dao = SamDao()
+    bed_dao = BedDao()
+    cytoband_dao = CytobandDao()
+    chromosome_dao = ChromosomeDao()
 
     chrs = []
     for chr_id in cytoband_dao.all_chr_id():
@@ -218,8 +214,8 @@ def viewer():
 
 @app.route('/download')
 def download():
-    sam_dao = SamDao(engine)
-    bed_dao = BedDao(engine)
+    sam_dao = SamDao()
+    bed_dao = BedDao()
 
     samfiles = []
     bedfiles = []
@@ -243,9 +239,9 @@ def download():
 
 @app.route('/manager')
 def manager():
-    sam_dao = SamDao(engine)
-    bed_dao = BedDao(engine)
-    tag_dao = TagDao(engine)
+    sam_dao = SamDao()
+    bed_dao = BedDao()
+    tag_dao = TagDao()
 
     tags = []
 
@@ -312,11 +308,11 @@ def tag_new():
     if not tag_name:
         return redirect('/manager')
 
-    tag_dao = TagDao(engine)
+    tag_dao = TagDao()
 
     try:
         sam_filenames = request.form.getlist('sam')
-        sam_dao = SamDao(engine)
+        sam_dao = SamDao()
         for sam_filename in sam_filenames:
             sam = sam_dao.get_by_filename(sam_filename)
             tag_dao.add_tag_with_sam(tag_name, sam)
@@ -325,7 +321,7 @@ def tag_new():
 
     try:
         bed_filenames = request.form.getlist('bed')
-        bed_dao = BedDao(engine)
+        bed_dao = BedDao()
         for bed_filename in bed_filenames:
             bed = bed_dao.get_by_filename(bed_filename)
             tag_dao.add_tag_with_bed(tag_name, bed)
@@ -341,12 +337,12 @@ def tag_update():
     if not tag_id:
         return redirect('/manager')
 
-    tag_dao = TagDao(engine)
+    tag_dao = TagDao()
     tag = tag_dao.get_by_id(tag_id)
 
     try:
         req_filenames = request.form.getlist('sam')
-        sam_dao = SamDao(engine)
+        sam_dao = SamDao()
         for sam in sam_dao.get_by_tag_id(tag_id):
             if not sam.file_name in req_filenames:
                 tag_dao.remove_sam(sam, tag)
@@ -359,7 +355,7 @@ def tag_update():
 
     try:
         req_filenames = request.form.getlist('bed')
-        bed_dao = BedDao(engine)
+        bed_dao = BedDao()
         for bed in bed_dao.get_by_tag_id(tag_id):
             if not bed.file_name in req_filenames:
                 tag_dao.remove_bed(bed, tag)
@@ -381,10 +377,10 @@ def tag_update_by_file():
     if not filetype or not fileid or not tagids:
         return redirect('/')
 
-    tag_dao = TagDao(engine)
+    tag_dao = TagDao()
     tags = []
     if filetype == 'sam':
-        sam_dao = SamDao(engine)
+        sam_dao = SamDao()
         sam = sam_dao.get_by_id(fileid)
         tags = tag_dao.get_by_samid(sam.sam_id)
         for tag in tags:
@@ -393,10 +389,13 @@ def tag_update_by_file():
                 tag_dao.update_tag_date(tag['id'])
         for tag_id in tagids:
             tag = tag_dao.get_by_id(tag_id)
-            tag_dao.add_tag_with_sam(tag.name, sam)
-            tag_dao.update_tag_date(tag_id)
+            try:
+                tag_dao.add_tag_with_sam(tag.name, sam)
+                tag_dao.update_tag_date(tag_id)
+            except IntegrityError:
+                pass
     elif filetype == 'bed':
-        bed_dao = BedDao(engine)
+        bed_dao = BedDao()
         bed = bed_dao.get_by_id(fileid)
         tags = tag_dao.get_by_bedid(bed.bed_id)
         for tag in tags:
@@ -405,8 +404,11 @@ def tag_update_by_file():
                 tag_dao.update_tag_date(tag['id'])
         for tag_id in tagids:
             tag = tag_dao.get_by_id(tag_id)
-            tag_dao.add_tag_with_bed(tag.name, bed)
-            tag_dao.update_tag_date(tag_id)
+            try:
+                tag_dao.add_tag_with_bed(tag.name, bed)
+                tag_dao.update_tag_date(tag_id)
+            except IntegrityError:
+                pass
 
     return redirect('/')
 
@@ -417,7 +419,7 @@ def tag_remove():
     if not tag_id:
         return redirect('/manager')
     print 'remove tag'
-    tag_dao = TagDao(engine)
+    tag_dao = TagDao()
     tag_dao.remove_by_id(tag_id)
 
     return redirect('/manager')
@@ -470,30 +472,3 @@ def allowed_file(filename, extensions):
 
 def viewer_enable(ip):
     return ip in ws_viewer_sockets
-
-
-def run():
-    if len(sys.argv) == 2 and sys.argv[1] == '--wsgi':
-        print '''\
-Debug: Disable
-Testing: Disable
-Websocket: Enable
-
-Run "$ python app.py" if you want to use Debug/Testing mode
-'''
-        server = pywsgi.WSGIServer(('', 5000),
-                                   app,
-                                   handler_class=WebSocketHandler)
-        server.serve_forever()
-    else:
-        print '''\
-Debug: Enable
-Testing: Enable
-Websocket: Disable
-
-Run "$ python app.py --wsgi" if you want to use websocket
-'''
-        app.run(host='0.0.0.0')
-
-if __name__ == '__main__':
-    run()
