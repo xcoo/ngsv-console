@@ -1,67 +1,34 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+{% extends "base.html" %}
 
-    <title>NGSV Console</title>
+{% block title %}NGSV Console{% endblock %}
 
-    <link type="text/css" href="/css/bootstrap.min.css" rel="stylesheet" />
-    <link type="text/css" href="/css/chosen.css" rel="stylesheet" />
-    <link type="text/css" href="/css/main.css" rel="stylesheet" />
+{% block style %}
+  {{ super() }}
+  <link type="text/css" href="/css/chosen.css" rel="stylesheet" />
+{% endblock %}
 
-    <link rel="shortcut icon" href="/img/favicon.ico" />
-
-    <!--[if lt IE 9]>
-      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-  </head>
-
-  <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="brand" href="/">NGSV Console</a>
-          <div class="nav-collapse collapse">
-            <ul class="nav">
-              <li><a href="/upload">Upload</a></li>
-              <li><a href="/download">Download</a></li>
-              <li><a href="/manager">Manager</a></li>
-              <li><a href="/viewer">Viewer</a></li>
-              <li><a href="/help">Help</a></li>
-            </ul>
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="span4">
+        <form class="form-search" method="post" action="/api/search">
+          <div class="input-append">
+            <input type="text" name="query" class="span3 search-query" placeholder="Search by filename or tag">
+              <button type="submit" class="btn">Search</button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
 
-    <div class="container">
-      <div class="row">
-        <div class="span4">
-          <form class="form-search" method="post" action="/api/search">
-            <div class="input-append">
-              <input type="text" name="query" class="span3 search-query" placeholder="Search by filename or tag">
-              <button type="submit" class="btn">Search</button>
-            </div>
-          </form>
-        </div>
-      </div>
+    <div class="row-fluid">
+      <div class="span1"><strong>Type</strong></div>
+      <div class="span4"><strong>Filename</strong></div>
+      <div class="span4"><strong>Tags</strong></div>
+      <div class="span2"><strong>Uploaded at</strong></div>
+      <div class="span1"><strong>Download</strong></div>
+    </div>
 
-      <div class="row-fluid">
-        <div class="span1"><strong>Type</strong></div>
-        <div class="span4"><strong>Filename</strong></div>
-        <div class="span4"><strong>Tags</strong></div>
-        <div class="span2"><strong>Uploaded at</strong></div>
-        <div class="span1"><strong>Download</strong></div>
-      </div>
-
-      {% for f in files %}
+    {% for f in files %}
       <div class="row-fluid">
         <div class="span1">
           {{ f.type }}
@@ -74,12 +41,12 @@
             <div class="span10 tags" id="{{ f.type }}-{{ f.id }}">
               <form method="post" action="/api/tag/update-by-file" style="margin-bottom: 0;">
                 <input type="hidden" name="type" value="{{ f.type }}">
-                <input type="hidden" name="id" value="{{ f.id }}">
-                <select name="tags" data-placeholder="Select tag" class="chzn-select" multiple autocomplete="off" style="width: 100%;" tabindex="4">
-                  {% for t in tags %}
-                  <option value="{{ t.tag_id }}">{{ t.name }}</option>
-                  {% endfor %}
-                </select>
+                  <input type="hidden" name="id" value="{{ f.id }}">
+                    <select name="tags" data-placeholder="Select tag" class="chzn-select" multiple autocomplete="off" style="width: 100%;" tabindex="4">
+                      {% for t in tags %}
+                        <option value="{{ t.tag_id }}">{{ t.name }}</option>
+                      {% endfor %}
+                    </select>
               </form>
             </div>
             <div class="span2">
@@ -94,29 +61,28 @@
           <a href="{{ f.url }}">{{ f.size }}</a>
         </div>
       </div>
-      {% endfor %}
-    </div>
+    {% endfor %}
+  </div>
+{% endblock %}
 
-    {% include 'footer.html' %}
+{% block script %}
+  <script type="text/javascript" src="/js/jquery.min.js"></script>
+  <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/js/chosen.jquery.js"></script>
 
-    <script type="text/javascript" src="/js/jquery.min.js"></script>
-    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="/js/chosen.jquery.js"></script>
+  <script type="text/javascript">
+    var tagInfos = {};
+    (function() {
+        var tags;
+        {% for f in files -%}
+        tags = [];
+        {% for t in f.tags %}
+        tags.push('{{ t.tag_id }}');
+        {% endfor %}
+        tagInfos['{{ f.type }}-{{ f.id }}'] = tags;
+        {%- endfor %}
+    })();
+  </script>
 
-    <script type="text/javascript">
-      var tagInfos = {};
-      (function() {
-          var tags;
-          {% for f in files -%}
-          tags = [];
-          {% for t in f.tags %}
-          tags.push('{{ t.tag_id }}');
-          {% endfor %}
-          tagInfos['{{ f.type }}-{{ f.id }}'] = tags;
-          {%- endfor %}
-      })();
-    </script>
-
-    <script type="text/javascript" src="/js/console-main.js"></script>
-  </body>
-</html>
+  <script type="text/javascript" src="/js/console-main.js"></script>
+{% endblock %}
