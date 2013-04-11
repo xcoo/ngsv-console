@@ -19,11 +19,14 @@
 #
 
 from __future__ import absolute_import
+from __future__ import print_function
 
 import datetime
 from urlparse import urljoin
 
 from flask import render_template, request
+
+from sqlalchemy import or_
 
 from ngsvconsole import app, conf, tasks_info, ws_viewer_sockets
 from ngsvconsole.models import Sam, Bed, Cytoband, Chromosome
@@ -33,33 +36,93 @@ import ngsvconsole.util as util
 
 @app.route('/')
 def root():
+    files = get_files(Sam.query.all(), Bed.query.all())
+    return render_template('main.html', files=files, tags=Tag.query.all())
+
+
+@app.route('/search', methods=['GET'])
+def search():
+    req_query = request.args.get('q', '')
+    req_type = request.args.get('t', '')
+    req_filename = request.args.get('fn', '')
+    req_tag = request.args.get('tag', '')
+
+    query = req_query
+    in_type = req_type
+    in_filename = True
+    if req_filename == 'false':
+        in_filename = False
+    in_tag = True
+    if req_tag == 'false':
+        in_tag = False
+
+    like = '%%%s%%' % query
+
+    sams = None
+    if in_type == 'all' or in_type == 'sam':
+        if in_filename and in_tag:
+            sams = Sam.query \
+                      .join(SamTag).join(Tag) \
+                      .filter(or_(Sam.file_name.like(like),
+                                  Tag.name.like(like))).all()
+        elif in_filename:
+            sams = Sam.query.filter(Sam.file_name.like(like)).all()
+        elif in_tag:
+            sams = Sam.query \
+                      .join(SamTag).join(Tag) \
+                      .filter(Tag.name.like(like)).all()
+
+    beds = None
+    if in_type == 'all' or in_type == 'bed':
+        if in_filename and in_tag:
+            beds = Bed.query \
+                      .join(BedTag).join(Tag) \
+                      .filter(or_(Bed.file_name.like(like),
+                                  Tag.name.like(like))).all()
+        elif in_filename:
+            beds = Bed.query.filter(Bed.file_name.like(like)).all()
+        elif in_tag:
+            beds = Bed.query \
+                      .join(BedTag).join(Tag) \
+                      .filter(Tag.name.like(like)).all()
+
+    files = get_files(sams, beds)
+    return render_template('search.html',
+                           query=req_query, files=files, tags=Tag.query.all())
+
+
+def get_files(sams=None, beds=None):
     samfiles = []
-    for sam in Sam.query.all():
-        samfile = {
-            'type': 'sam',
-            'filename': sam.file_name,
-            'id': sam.sam_id,
-            'created_date': sam.created_date,
-            'url': urljoin(conf.upload_dir_url, sam.file_name),
-            'size': util.get_pretty_size(urljoin(conf.upload_dir,
-                                                 sam.file_name))}
-        samfile['tags'] = Tag.query.join(SamTag, SamTag.sam_id == sam.sam_id) \
-                                   .filter(Tag.tag_id == SamTag.tag_id).all()
-        samfiles.append(samfile)
+    if sams is not None:
+        for sam in sams:
+            samfile = {
+                'type': 'sam',
+                'filename': sam.file_name,
+                'id': sam.sam_id,
+                'created_date': sam.created_date,
+                'url': urljoin(conf.upload_dir_url, sam.file_name),
+                'size': util.get_pretty_size(urljoin(conf.upload_dir,
+                                                     sam.file_name))}
+            samfile['tags'] = Tag.query \
+                                 .join(SamTag, SamTag.sam_id == sam.sam_id) \
+                                 .filter(Tag.tag_id == SamTag.tag_id).all()
+            samfiles.append(samfile)
 
     bedfiles = []
-    for bed in Bed.query.all():
-        bedfile = {
-            'type': 'bed',
-            'filename': bed.file_name,
-            'id': bed.bed_id,
-            'created_date': bed.created_date,
-            'url': urljoin(conf.upload_dir_url, sam.file_name),
-            'size': util.get_pretty_size(urljoin(conf.upload_dir,
-                                                 bed.file_name))}
-        bedfile['tags'] = Tag.query.join(BedTag, BedTag.bed_id == bed.bed_id) \
-                                   .filter(Tag.tag_id == BedTag.tag_id).all()
-        bedfiles.append(bedfile)
+    if beds is not None:
+        for bed in beds:
+            bedfile = {
+                'type': 'bed',
+                'filename': bed.file_name,
+                'id': bed.bed_id,
+                'created_date': bed.created_date,
+                'url': urljoin(conf.upload_dir_url, bed.file_name),
+                'size': util.get_pretty_size(urljoin(conf.upload_dir,
+                                                     bed.file_name))}
+            bedfile['tags'] = Tag.query \
+                                 .join(BedTag, BedTag.bed_id == bed.bed_id) \
+                                 .filter(Tag.tag_id == BedTag.tag_id).all()
+            bedfiles.append(bedfile)
 
     files = samfiles + bedfiles
     files.sort(key=lambda x: x['created_date'], reverse=True)
@@ -67,14 +130,7 @@ def root():
         dt = datetime.datetime.fromtimestamp(f['created_date'])
         f['created_date'] = dt.strftime('%Y/%m/%d %H:%M')
 
-    return render_template('main.html', files=files, tags=Tag.query.all())
-
-
-@app.route('/search', methods=['GET'])
-def search():
-    q = request.args.get('q', '')
-    query = q
-    return render_template('search.html', query=query)
+    return files
 
 
 @app.route('/nav')
@@ -151,28 +207,6 @@ def viewer():
                            chrs=chrs,
                            hostname=conf.host,
                            viewer_enable=viewer_enable(request.remote_addr))
-
-
-@app.route('/download')
-def download():
-    samfiles = []
-    bedfiles = []
-
-    for sam in Sam.query.all():
-        f = {}
-        f['name'] = sam.file_name
-        f['url'] = urljoin(conf.upload_dir_url, sam.file_name)
-        samfiles.append(f)
-
-    for bed in Bed.query.all():
-        f = {}
-        f['name'] = bed.file_name
-        f['url'] = urljoin(conf.upload_dir_url, bed.file_name)
-        bedfiles.append(f)
-
-    return render_template('download.html',
-                           samfiles=samfiles,
-                           bedfiles=bedfiles)
 
 
 @app.route('/manager')

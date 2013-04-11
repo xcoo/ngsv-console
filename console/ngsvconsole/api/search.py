@@ -20,6 +20,12 @@
 
 from __future__ import absolute_import
 
+__author__ = 'Toshiki Takeuchi'
+__copyright__ = 'Copyright (C) 2012-2013, Xcoo, Inc.'
+__license__ = 'Apache License 2.0'
+__maintainer__ = 'Toshiki Takeuchi'
+__email__ = 'developer@xcoo.jp'
+
 from flask import redirect, request, url_for
 
 from ngsvconsole import app
@@ -27,5 +33,24 @@ from ngsvconsole import app
 
 @app.route('/api/search', methods=['POST'])
 def api_search():
-    query = request.form['query']
-    return redirect(url_for('search', q=query))
+    req_query = ''
+    if 'query' in request.form:
+        req_query = request.form['query']
+
+    req_type = 'all'
+    if 'type' in request.form:
+        req_type = request.form['type']
+
+    req_filename = 'false'
+    if 'filename' in request.form:
+        req_filename = 'true'
+
+    req_tag = 'false'
+    if 'tag' in request.form:
+        req_tag = 'true'
+
+    return redirect(url_for('search',
+                            q=req_query,
+                            t=req_type,
+                            fn=req_filename,
+                            tag=req_tag))

@@ -15,7 +15,7 @@
           <div class="row-fluid">
             <div class="span4">
               <div class="input-append">
-                <input type="text" name="query" class="span12 search-query" placeholder="Search by filename or tag" value="{{ query }}">
+                <input type="text" name="query" class="span12 search-query" placeholder="Search keyword" value="{{ query }}">
                   <button type="submit" class="btn">Search</button>
               </div>
             </div>
@@ -24,15 +24,15 @@
             <div class="span12">
               type:
               <select name="type">
-                <option>All</option>
-                <option>Sam</option>
-                <option>Bed</option>
+                <option value="all">All</option>
+                <option value="sam">Sam</option>
+                <option value="bed">Bed</option>
               </select>
               <label class="checkbox">
-                <input type="checkbox" name="filename">Filename
+                <input type="checkbox" name="filename" checked>Filename
               </label>
               <label class="checkbox">
-                <input type="checkbox" name="tag">Tag
+                <input type="checkbox" name="tag" checked>Tag
               </label>
             </div>
           </div>
@@ -64,7 +64,7 @@
               <input type="hidden" name="id" value="{{ f.id }}">
               <select name="tags" data-placeholder="Select tag" class="chzn-select" multiple autocomplete="off" style="width: 100%;" tabindex="4">
                 {% for t in tags %}
-                <option value="{{ t.id }}">{{ t.name }}</option>
+                <option value="{{ t.tag_id }}">{{ t.name }}</option>
                 {% endfor %}
               </select>
             </form>
@@ -97,7 +97,7 @@
         {% for f in files -%}
         tags = [];
         {% for t in f.tags %}
-        tags.push('{{ t.id }}');
+        tags.push('{{ t.tag_id }}');
         {% endfor %}
         tagInfos['{{ f.type }}-{{ f.id }}'] = tags;
         {%- endfor %}

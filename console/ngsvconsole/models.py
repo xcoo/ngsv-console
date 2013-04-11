@@ -28,10 +28,40 @@ __email__ = 'developer@xcoo.jp'
 
 import datetime
 
-from sqlalchemy import Column
+from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Integer, BigInteger, String, Text, Date
 
 from ngsvconsole import db
+
+
+class Sam(db.Model):
+
+    __tablename__ = 'sam'
+
+    sam_id = Column(BigInteger, primary_key=True, autoincrement=True)
+    file_name = Column(String(1024), nullable=False)
+    created_date = Column(BigInteger, nullable=False)
+    header = Column(Text, nullable=False)
+    lengths = Column(Text, nullable=False)
+    mapped = Column(Integer, nullable=False)
+    number_of_chromosomes = Column(Integer, nullable=False)
+    chromosomes = Column(Text, nullable=False)
+
+    def __init__(self, file_name, created_data, header, lengths, mapped,
+                 number_of_chromosomes, chromosomes):
+        self.file_name = file_name
+        self.created_data = created_data
+        self.header = header
+        self.lengths = lengths
+        self.mapped = mapped
+        self.number_of_chromosomes = number_of_chromosomes
+        self.chromosomes = chromosomes
+
+    def __repr__(self):
+        if self.sam_id is None:
+            return "<sam('%s')>" % (self.file_name)
+        else:
+            return "<sam('%d', '%s')>" % (self.sam_id, self.file_name)
 
 
 class Bed(db.Model):
@@ -108,36 +138,6 @@ class Cytoband(db.Model):
                 self.name, self.gie_stain)
 
 
-class Sam(db.Model):
-
-    __tablename__ = 'sam'
-
-    sam_id = Column(BigInteger, primary_key=True, autoincrement=True)
-    file_name = Column(String(1024), nullable=False)
-    created_date = Column(BigInteger, nullable=False)
-    header = Column(Text, nullable=False)
-    lengths = Column(Text, nullable=False)
-    mapped = Column(Integer, nullable=False)
-    number_of_chromosomes = Column(Integer, nullable=False)
-    chromosomes = Column(Text, nullable=False)
-
-    def __init__(self, file_name, created_data, header, lengths, mapped,
-                 number_of_chromosomes, chromosomes):
-        self.file_name = file_name
-        self.created_data = created_data
-        self.header = header
-        self.lengths = lengths
-        self.mapped = mapped
-        self.number_of_chromosomes = number_of_chromosomes
-        self.chromosomes = chromosomes
-
-    def __repr__(self):
-        if self.sam_id is None:
-            return "<sam('%s')>" % (self.file_name)
-        else:
-            return "<sam('%d', '%s')>" % (self.sam_id, self.file_name)
-
-
 class Tag(db.Model):
 
     __tablename__ = 'tag'
@@ -166,8 +166,10 @@ class SamTag(db.Model):
 
     __tablename__ = 'sam_tag'
 
-    tag_id = Column(BigInteger, primary_key=True, nullable=False)
-    sam_id = Column(BigInteger, primary_key=True, nullable=False)
+    tag_id = Column(BigInteger, ForeignKey('tag.tag_id'),
+                    primary_key=True, nullable=False)
+    sam_id = Column(BigInteger, ForeignKey('sam.sam_id'),
+                    primary_key=True, nullable=False)
 
     def __init__(self, tag_id, sam_id):
         self.tag_id = tag_id
@@ -181,8 +183,10 @@ class BedTag(db.Model):
 
     __tablename__ = 'bed_tag'
 
-    tag_id = Column(BigInteger, primary_key=True, nullable=False)
-    bed_id = Column(BigInteger, primary_key=True, nullable=False)
+    tag_id = Column(BigInteger, ForeignKey('tag.tag_id'),
+                    primary_key=True, nullable=False)
+    bed_id = Column(BigInteger, ForeignKey('bed.bed_id'),
+                    primary_key=True, nullable=False)
 
     def __init__(self, tag_id, bed_id):
         self.tag_id = tag_id
