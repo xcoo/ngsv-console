@@ -17,6 +17,29 @@ ngsvConsole.main = ngsvConsole.main || {};
 
         $('.chzn-select').chosen();
         $('.chzn-select-deselect').chosen({allow_single_deselect: true});
+
+        ngsvConsole.main.setupTopRow();
+    };
+
+    ngsvConsole.main.setupTopRow = function() {
+        $('#top-row').find('div').each(function() {
+            var dataSort = $(this).attr('data-sort');
+
+            if (dataSort == sort) {
+                var $icon = $('<i class="icon-chevron-down"></i>');
+                $(this).append($icon);
+
+                var href = $.format('/?sort=%s&desc=%s', sort, !desc);
+                $(this).click(function() {
+                    location.href = href;
+                });
+            } else if (dataSort != 'tag') {
+                href = $.format('/?sort=%s&desc=%s', dataSort, false);
+                $(this).click(function() {
+                    location.href = href;
+                });
+            }
+        });
     };
 })();
 

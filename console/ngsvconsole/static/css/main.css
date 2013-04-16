@@ -72,3 +72,13 @@ body {
   bottom: 0;
   z-index: 1030;
 }
+
+/**/
+
+#top-row > div {
+  cursor: default;
+}
+
+#top-row > div:hover {
+  text-decoration: underline;
+}

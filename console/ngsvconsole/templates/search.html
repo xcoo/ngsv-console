@@ -40,12 +40,22 @@
       </div>
     </div>
 
-    <div class="row-fluid" style="margin-top: 20px">
-      <div class="span1"><strong>Type</strong></div>
-      <div class="span4"><strong>Filename</strong></div>
-      <div class="span4"><strong>Tags</strong></div>
-      <div class="span2"><strong>Uploaded at</strong></div>
-      <div class="span1"><strong>Download</strong></div>
+    <div class="row-fluid" id="top-row" style="margin-top: 20px">
+      <div class="span1" data-sort="type">
+        <strong>Type</strong>
+      </div>
+      <div class="span4" data-sort="filename">
+        <strong>Filename</strong>
+      </div>
+      <div class="span4" data-sort="tag">
+        <strong>Tags</strong>
+      </div>
+      <div class="span2" data-sort="uploaded_at">
+        <strong>Uploaded at</strong>
+      </div>
+      <div class="span1" data-sort="download">
+        <strong>Download</strong>
+      </div>
     </div>
 
     {% for f in files %}
@@ -87,8 +97,11 @@
 
 {% block script %}
   <script type="text/javascript" src="/js/jquery.min.js"></script>
+  <script type="text/javascript" src="/js/format4js.js"></script>
   <script type="text/javascript" src="/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="/js/chosen.jquery.js"></script>
+
+  <script type="text/javascript" src="/js/ngsv-console.js"></script>
 
   <script type="text/javascript">
     var tagInfos = {};
@@ -102,7 +115,17 @@
         tagInfos['{{ f.type }}-{{ f.id }}'] = tags;
         {%- endfor %}
     })();
+
+    var sort = 'uploaded_at';
+    {% if sort %}
+    sort = '{{ sort }}';
+    {% endif %}
+
+    var desc = true;
+    {% if not desc %}
+    desc = false;
+    {% endif %}
   </script>
 
-  <script type="text/javascript" src="/js/console-main.js"></script>
+  <script type="text/javascript" src="/js/console-search.js"></script>
 {% endblock %}

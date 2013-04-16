@@ -36,8 +36,20 @@ import ngsvconsole.util as util
 
 @app.route('/')
 def root():
-    files = get_files(Sam.query.all(), Bed.query.all())
-    return render_template('main.html', files=files, tags=Tag.query.all())
+    req_sort = request.args.get('sort', '')
+    req_desc = request.args.get('desc', '')
+
+    sort = 'uploaded_at'
+    if req_sort is not None:
+        sort = req_sort
+    desc = True
+    if req_desc == 'false':
+        desc = False
+
+    files = get_files(Sam.query.all(), Bed.query.all(), sort=sort, desc=desc)
+
+    return render_template('main.html', files=files, tags=Tag.query.all(),
+                           sort=sort, desc=desc)
 
 
 @app.route('/search', methods=['GET'])
@@ -46,6 +58,8 @@ def search():
     req_type = request.args.get('t', '')
     req_filename = request.args.get('fn', '')
     req_tag = request.args.get('tag', '')
+    req_sort = request.args.get('sort', '')
+    req_desc = request.args.get('desc', '')
 
     query = req_query
     in_type = req_type
@@ -55,6 +69,12 @@ def search():
     in_tag = True
     if req_tag == 'false':
         in_tag = False
+        sort = 'uploaded_at'
+    if req_sort is not None:
+        sort = req_sort
+    desc = True
+    if req_desc == 'false':
+        desc = False
 
     like = '%%%s%%' % query
 
@@ -86,12 +106,13 @@ def search():
                       .join(BedTag).join(Tag) \
                       .filter(Tag.name.like(like)).all()
 
-    files = get_files(sams, beds)
+    files = get_files(sams, beds, sort=sort, desc=desc)
     return render_template('search.html',
-                           query=req_query, files=files, tags=Tag.query.all())
+                           query=req_query, files=files, tags=Tag.query.all(),
+                           sort=sort, desc=desc)
 
 
-def get_files(sams=None, beds=None):
+def get_files(sams=None, beds=None, sort='uploaded_at', desc=True):
     samfiles = []
     if sams is not None:
         for sam in sams:
@@ -125,7 +146,18 @@ def get_files(sams=None, beds=None):
             bedfiles.append(bedfile)
 
     files = samfiles + bedfiles
-    files.sort(key=lambda x: x['created_date'], reverse=True)
+
+    key = lambda x: x['created_date']
+    if sort == 'uploaded_at':
+        key = lambda x: x['created_date']
+    elif sort == 'type':
+        key = lambda x: x['type']
+    elif sort == 'filename':
+        key = lambda x: x['filename']
+    elif sort == 'download':
+        key = lambda x: x['size']
+
+    files.sort(key=key, reverse=desc)
     for f in files:
         dt = datetime.datetime.fromtimestamp(f['created_date'])
         f['created_date'] = dt.strftime('%Y/%m/%d %H:%M')
