@@ -22,6 +22,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 
 import datetime
+import os.path
 from urlparse import urljoin
 
 from flask import render_template, request
@@ -122,8 +123,8 @@ def get_files(sams=None, beds=None, sort='uploaded_at', desc=True):
                 'id': sam.sam_id,
                 'created_date': sam.created_date,
                 'url': urljoin(conf.upload_dir_url, sam.file_name),
-                'size': util.get_pretty_size(urljoin(conf.upload_dir,
-                                                     sam.file_name))}
+                'size': os.path.getsize(urljoin(conf.upload_dir,
+                                                sam.file_name))}
             samfile['tags'] = Tag.query \
                                  .join(SamTag, SamTag.sam_id == sam.sam_id) \
                                  .filter(Tag.tag_id == SamTag.tag_id).all()
@@ -138,8 +139,8 @@ def get_files(sams=None, beds=None, sort='uploaded_at', desc=True):
                 'id': bed.bed_id,
                 'created_date': bed.created_date,
                 'url': urljoin(conf.upload_dir_url, bed.file_name),
-                'size': util.get_pretty_size(urljoin(conf.upload_dir,
-                                                     bed.file_name))}
+                'size': os.path.getsize(urljoin(conf.upload_dir,
+                                                bed.file_name))}
             bedfile['tags'] = Tag.query \
                                  .join(BedTag, BedTag.bed_id == bed.bed_id) \
                                  .filter(Tag.tag_id == BedTag.tag_id).all()

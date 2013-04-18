@@ -59,14 +59,14 @@
     </div>
 
     {% for f in files %}
-    <div class="row-fluid">
-      <div class="span1">
+    <div class="row-fluid" id="{{ "row-%s-%s"|format(f.type, f.id) }}">
+      <div class="span1" data-row="type">
         {{ f.type }}
       </div>
-      <div class="span4">
+      <div class="span4" data-row="filename">
         {{ f.filename }}
       </div>
-      <div class="span4">
+      <div class="span4" data-row="tag">
         <div class="row-fluid">
           <div class="span10 tags" id="{{ f.type }}-{{ f.id }}">
             <form method="post" action="/api/tag/update-by-file" style="margin-bottom: 0;">
@@ -84,10 +84,10 @@
           </div>
         </div>
       </div>
-      <div class="span2">
+      <div class="span2" data-row="uploaded_at">
         {{ f.created_date }}
       </div>
-      <div class="span1">
+      <div class="span1" data-row="download">
         <a href="{{ f.url }}">{{ f.size }}</a>
       </div>
     </div>

@@ -19,6 +19,7 @@ ngsvConsole.search = ngsvConsole.search || {};
         $('.chzn-select-deselect').chosen({allow_single_deselect: true});
 
         ngsvConsole.search.setupTopRow();
+        ngsvConsole.search.formatSize();
     };
 
     ngsvConsole.search.setupTopRow = function() {
@@ -73,6 +74,10 @@ ngsvConsole.search = ngsvConsole.search || {};
                 });
             }
         });
+    };
+
+    ngsvConsole.search.formatSize = function() {
+
     };
 })();
 

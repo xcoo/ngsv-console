@@ -1,6 +1,8 @@
 # NGSV Console
 
-## Requirements
+Web console for accessing database of NGSV.
+
+# Requirements
 
 * Python (v2.7)
     * pysam (>= v0.7)
@@ -15,26 +17,27 @@
 * MySQL
 * RabbitMQ
 
-## Installation
+# Installation
 
-### Create database
+## Install ngsv-tools
+
+```
+$ git clone git@github.com:xcoo/ngsv-tools.git
+$ cd ngsv-tools
+$ python setup.py install
+```
+
+## Create database
 
 ngsv uses MySQL database.
 First, create database.
 
 ```
-$ cd [ngsv dir]/db
+$ cd [ngsv-tools]/db
 $ mysql -u root -p < ngsv.sql
 ```
 
-### Install ngsv-tools
-
-```
-$ cd [ngsv dir]/tools
-$ python setup.py install
-```
-
-### Setup database
+## Setup database
 
 Setup configuration.
 
@@ -64,20 +67,19 @@ Start MySQL and RabbitMQ.
 Start Celery.
 
 ```
-$ cd [ngsv dir]/console/ngsvconsole
+$ cd ngsvconsole
 $ celery worker --app=taskserver -l info
 ```
 
 Start web server
 
 ```
-$ cd [ngsv dir]/console/
 $ ./run.py --wsgi
 ```
 
 Browse `http://localhost:5000`. And upload bam/bed files.
 
-### Load data of human genome
+## Load data of human genome
 
 Load cytobands and refgenes to MySQL database by the following commandline ngsvtools.
 
@@ -86,7 +88,7 @@ $ ngsv loadcytoband [--dbuser USER] [--dbpassword PASSWORD]
 $ ngsv loadrefgene [--dbuser USER] [--dbpassword PASSWORD]
 ```
 
-## License
+# License
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 
