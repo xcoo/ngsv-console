@@ -19,6 +19,7 @@ ngsvConsole.main = ngsvConsole.main || {};
         $('.chzn-select-deselect').chosen({allow_single_deselect: true});
 
         ngsvConsole.main.setupTopRow();
+        ngsvConsole.main.formatSize();
     };
 
     ngsvConsole.main.setupTopRow = function() {
@@ -40,6 +41,13 @@ ngsvConsole.main = ngsvConsole.main || {};
                 });
             }
         });
+    };
+
+    ngsvConsole.main.formatSize = function() {
+        for (var key in files) {
+            var $size = $($.format('#%s > div[data-row=download] > a', key));
+            $size.html(ngsvConsole.formatSize(files[key].size));
+        }
     };
 })();
 

@@ -23,32 +23,32 @@
     </div>
 
     <div class="row-fluid" id="top-row">
-      <div class="span1" data-sort="type">
+      <div class="span1 sortable" data-sort="type">
         <strong>Type</strong>
       </div>
-      <div class="span4" data-sort="filename">
+      <div class="span4 sortable" data-sort="filename">
         <strong>Filename</strong>
       </div>
       <div class="span4" data-sort="tag">
         <strong>Tags</strong>
       </div>
-      <div class="span2" data-sort="uploaded_at">
+      <div class="span2 sortable" data-sort="uploaded_at">
         <strong>Uploaded at</strong>
       </div>
-      <div class="span1" data-sort="download">
+      <div class="span1 sortable" data-sort="download">
         <strong>Download</strong>
       </div>
     </div>
 
     {% for f in files %}
-    <div class="row-fluid">
-      <div class="span1">
+    <div class="row-fluid" id="{{ "row-%s-%s"|format(f.type, f.id) }}">
+      <div class="span1" data-row="type">
         {{ f.type }}
       </div>
-      <div class="span4">
+      <div class="span4" data-row="filename">
         {{ f.filename }}
       </div>
-      <div class="span4">
+      <div class="span4" data-row="tag">
         <div class="row-fluid">
           <div class="span10 tags" id="{{ f.type }}-{{ f.id }}">
             <form method="post" action="/api/tag/update-by-file" style="margin-bottom: 0;">
@@ -66,11 +66,11 @@
           </div>
         </div>
       </div>
-      <div class="span2">
+      <div class="span2" data-row="uploaded_at">
         {{ f.created_date }}
       </div>
-      <div class="span1">
-        <a href="{{ f.url }}">{{ f.size }}</a>
+      <div class="span1" data-row="download">
+        <a href="{{ f.url }}"></a>
       </div>
     </div>
     {% endfor %}
@@ -86,6 +86,15 @@
   <script type="text/javascript" src="/js/ngsv-console.js"></script>
 
   <script type="text/javascript">
+    var files = {};
+    (function() {
+        {% for f in files -%}
+        files['{{ "row-%s-%s"|format(f.type, f.id) }}'] = {
+            size: {{ f.size }}
+        };
+        {%- endfor %}
+    })();
+
     var tagInfos = {};
     (function() {
         var tags;

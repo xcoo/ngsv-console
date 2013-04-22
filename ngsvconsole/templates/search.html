@@ -41,19 +41,19 @@
     </div>
 
     <div class="row-fluid" id="top-row" style="margin-top: 20px">
-      <div class="span1" data-sort="type">
+      <div class="span1 sortable" data-sort="type">
         <strong>Type</strong>
       </div>
-      <div class="span4" data-sort="filename">
+      <div class="span4 sortable" data-sort="filename">
         <strong>Filename</strong>
       </div>
       <div class="span4" data-sort="tag">
         <strong>Tags</strong>
       </div>
-      <div class="span2" data-sort="uploaded_at">
+      <div class="span2 sortable" data-sort="uploaded_at">
         <strong>Uploaded at</strong>
       </div>
-      <div class="span1" data-sort="download">
+      <div class="span1 sortable" data-sort="download">
         <strong>Download</strong>
       </div>
     </div>
@@ -88,7 +88,7 @@
         {{ f.created_date }}
       </div>
       <div class="span1" data-row="download">
-        <a href="{{ f.url }}">{{ f.size }}</a>
+        <a href="{{ f.url }}"></a>
       </div>
     </div>
     {% endfor %}
@@ -104,6 +104,15 @@
   <script type="text/javascript" src="/js/ngsv-console.js"></script>
 
   <script type="text/javascript">
+    var files = {};
+    (function() {
+        {% for f in files -%}
+        files['{{ "row-%s-%s"|format(f.type, f.id) }}'] = {
+            size: {{ f.size }}
+        };
+        {%- endfor %}
+    })();
+
     var tagInfos = {};
     (function() {
         var tags;

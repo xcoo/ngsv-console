@@ -77,7 +77,10 @@ ngsvConsole.search = ngsvConsole.search || {};
     };
 
     ngsvConsole.search.formatSize = function() {
-
+        for (var key in files) {
+            var $size = $($.format('#%s > div[data-row=download] > a', key));
+            $size.html(ngsvConsole.formatSize(files[key].size));
+        }
     };
 })();
 

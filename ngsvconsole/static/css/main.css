@@ -79,6 +79,6 @@ body {
   cursor: default;
 }
 
-#top-row > div:hover {
+#top-row > div.sortable:hover {
   text-decoration: underline;
 }
