@@ -29,10 +29,9 @@ from flask import render_template, request
 
 from sqlalchemy import or_
 
-from ngsvconsole import app, conf, tasks_info, ws_viewer_sockets
+from ngsvconsole.app import app, conf, tasks_info, ws_viewer_sockets
 from ngsvconsole.models import Sam, Bed, Cytoband, Chromosome
 from ngsvconsole.models import Tag, SamTag, BedTag
-import ngsvconsole.util as util
 
 
 @app.route('/')

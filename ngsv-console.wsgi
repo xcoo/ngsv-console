@@ -23,6 +23,7 @@ import sys
 
 sys.stdout = sys.stderr
 
-os.environ['NGSV_CONSOLE_CONFIG'] = os.path.join(os.path.dirname(__file__), '../config/ngsv.ini')
+os.environ['NGSV_CONSOLE_CONFIG'] = os.path.join(os.path.dirname(__file__),
+                                                 'config/ngsv.ini')
 
-from app import app as application
+from ngsvconsole.app import app as application

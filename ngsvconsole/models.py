@@ -31,7 +31,7 @@ import datetime
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Integer, BigInteger, String, Text, Date
 
-from ngsvconsole import db
+from ngsvconsole.app import db
 
 
 class Sam(db.Model):

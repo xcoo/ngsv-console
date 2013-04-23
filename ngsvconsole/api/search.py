@@ -28,7 +28,7 @@ __email__ = 'developer@xcoo.jp'
 
 from flask import redirect, request, url_for
 
-from ngsvconsole import app
+from ngsvconsole.app import app
 
 
 @app.route('/api/search', methods=['POST'])

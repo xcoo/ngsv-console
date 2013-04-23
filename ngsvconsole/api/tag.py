@@ -28,7 +28,7 @@ from sqlalchemy import and_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
-from ngsvconsole import app, db
+from ngsvconsole.app import app, db
 from ngsvconsole.models import Sam, Bed, Tag, SamTag, BedTag
 
 

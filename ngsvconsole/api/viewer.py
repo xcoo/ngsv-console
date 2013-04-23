@@ -24,7 +24,7 @@ from __future__ import print_function
 from geventwebsocket import WebSocketError
 from flask import redirect, request
 
-from ngsvconsole import app, ws_viewer_sockets
+from ngsvconsole.app import app, ws_viewer_sockets
 
 
 @app.route('/api/ws/connect')

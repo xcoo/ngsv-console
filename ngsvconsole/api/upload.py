@@ -25,7 +25,7 @@ import os
 from flask import redirect, request
 from werkzeug import secure_filename
 
-from ngsvconsole import app, conf, tasks_info
+from ngsvconsole.app import app, conf, tasks_info
 from ngsvconsole.taskserver.tasks import load_sam, load_bed
 
 

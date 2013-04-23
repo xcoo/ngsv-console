@@ -21,7 +21,6 @@
 from __future__ import absolute_import
 
 from celery import current_task
-from celery.decorators import task
 
 import ngsvtools.samloader
 import ngsvtools.histogramloader
@@ -29,9 +28,11 @@ import ngsvtools.bedloader
 from ngsvtools.sam.data.sql import SQLDB
 from ngsvtools.exception import UnsupportedFileError, AlreadyLoadedError
 
+from ngsvconsole.taskserver.celery import celery
+
 
 # Load a sam file and calculate histograms.
-@task(name='tasks.load_sam')
+@celery.task(name='tasks.load_sam')
 def load_sam(sam_file, db_name, db_host, db_user, db_password):
     current_task.update_state(state='STARTED')
     db = SQLDB(db_name, db_host, db_user, db_password)
@@ -58,7 +59,7 @@ def load_sam(sam_file, db_name, db_host, db_user, db_password):
 
 
 # Load a bed file.
-@task(name='tasks.load_bed')
+@celery.task(name='tasks.load_bed')
 def load_bed(bed_file, db_name, db_host, db_user, db_password):
     current_task.update_state(state='STARTED')
     db = SQLDB(db_name, db_host, db_user, db_password)

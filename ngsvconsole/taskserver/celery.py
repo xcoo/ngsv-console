@@ -22,10 +22,12 @@
 from __future__ import absolute_import
 
 from celery import Celery
+import ngsvconsole.taskserver.celeryconfig as celeryconfig
 
-celery = Celery('taskserver.celery', include=['taskserver.tasks'])
+celery = Celery('ngsvconsole.taskserver.celery',
+                include=['ngsvconsole.taskserver.tasks'])
 
-celery.config_from_object('celeryconfig')
+celery.config_from_object(celeryconfig)
 
 if __name__ == '__main__':
     celery.start()

@@ -64,8 +64,7 @@ Start MySQL and RabbitMQ.
 Start Celery.
 
 ```
-$ cd ngsvconsole
-$ celery worker --app=taskserver -l info
+$ celery worker --app=ngsvconsole.taskserver.celery -l info
 ```
 
 Start web server
