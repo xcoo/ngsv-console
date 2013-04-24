@@ -22,6 +22,7 @@ from __future__ import absolute_import
 
 from celery import current_task
 
+import ngsvtools.action
 import ngsvtools.samloader
 import ngsvtools.histogramloader
 import ngsvtools.bedloader
@@ -29,6 +30,13 @@ from ngsvtools.sam.data.sql import SQLDB
 from ngsvtools.exception import UnsupportedFileError, AlreadyLoadedError
 
 from ngsvconsole.taskserver.celery import celery
+
+
+class HistogramLoaderAction(ngsvtools.action.HistogramLoaderAction):
+
+    def __call__(self, progress):
+        current_task.update_state(state='PROGRESS',
+                                  meta={'progress': 50 + progress / 2})
 
 
 # Load a sam file and calculate histograms.
@@ -50,12 +58,19 @@ def load_sam(sam_file, db_name, db_host, db_user, db_password):
 
     current_task.update_state(state='PROGRESS', meta={'progress': 50})
 
-    ngsvtools.histogramloader.load(sam_file, db)
+    ngsvtools.histogramloader.load(sam_file, db, action=HistogramLoaderAction)
 
     if sam_already_loaded:
         return {'state': 'SUCCESS_WITH_ALERT', 'alert': alert}
 
     return {'state': 'SUCCESS'}
+
+
+class BedLoaderAction(ngsvtools.action.BedLoaderAction):
+
+    def __call__(self, progress):
+        current_task.update_state(state='PROGRESS',
+                                  meta={'progress': progress})
 
 
 # Load a bed file.
@@ -65,7 +80,7 @@ def load_bed(bed_file, db_name, db_host, db_user, db_password):
     db = SQLDB(db_name, db_host, db_user, db_password)
 
     try:
-        ngsvtools.bedloader.load(bed_file, db)
+        ngsvtools.bedloader.load(bed_file, db, action=BedLoaderAction)
     except UnsupportedFileError, e:
         return {'state': 'SUCCESS_WITH_ALERT', 'alert': e.msg}
     except AlreadyLoadedError, e:
