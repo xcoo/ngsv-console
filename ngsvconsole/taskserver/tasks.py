@@ -91,7 +91,7 @@ def load_bed(bed_file, db_name, db_host, db_user, db_password):
 
 
 # Load a cnv file.
-@task(name='tasks.load_cnv')
+@celery.task(name='tasks.load_cnv')
 def load_cnv(cnv_file, db_name, db_host, db_user, db_password):
     current_task.update_state(state='STARTED')
     db = SQLDB(db_name, db_host, db_user, db_password)
