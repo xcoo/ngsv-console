@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    {% block head %}
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>{% block title %}{% endblock %}</title>
+
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    {% endblock %}
+
+    {% block style %}
+    <link type="text/css" href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link type="text/css" href="/css/main.css" rel="stylesheet" />
+    {% endblock %}
+  </head>
+  <body>
+    {% set navigation_bar = [
+      (url_for('upload'), 'upload', 'Upload'),
+      (url_for('viewer'), 'viewer', 'Viewer'),
+      (url_for('manager'), 'manager', 'Manager'),
+      (url_for('help'), 'help', 'Help')
+    ] -%}
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="/">NGSV Console</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              {% for href, id, caption in navigation_bar %}
+              <li{% if id == active_page %} class="active"{% endif %}><a href="{{ href|e }}">{{ caption|e }}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% block content %}{% endblock %}
+
+    <footer class="footer footer-fixed-bottom">
+      {% block footer %}
+      <div class="container">
+        <p><a href="http://www.xcoo.jp" target="_blank">Xcoo, Inc.</a></p>
+      </div>
+      {% endblock %}
+    </footer>
+
+    {% block script %}{% endblock %}
+  </body>
+</html>

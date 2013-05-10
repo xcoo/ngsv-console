@@ -1,39 +1,40 @@
 # NGSV Console
 
-## Requirements
+Web console for accessing database of NGSV.
+
+# Requirements
 
 * Python (v2.7)
-    * pysam (>= v0.7)
+    * ngsv-tools
     * Flask
+    * Flask-SQLAlchemy
     * gevent
     * gevent-websocket
     * Celery
-    * MySQL-python
     * SQLAlchemy
-    * Cython
 * MySQL
 * RabbitMQ
 
-## Installation
+# Installation
 
-### Create database
-
-ngsv uses MySQL database.
-First, create database.
+## 1. Install ngsv-tools
 
 ```
-$ cd [ngsv dir]/db
-$ mysql -u root -p < ngsv.sql
-```
-
-### Install ngsv-tools
-
-```
-$ cd [ngsv dir]/tools
+$ git clone git@github.com:xcoo/ngsv-tools.git
+$ cd ngsv-tools
 $ python setup.py install
 ```
 
-### Setup database
+## 2. Create database
+
+NGSV Console cannot create database.
+First, create database using `ngsv-tools`.
+
+```
+$ ngsv initdb [--dbuser DBUSER] [--dbpassword DBPASSWORD]
+```
+
+## 3. Setup database
 
 Setup configuration.
 
@@ -46,13 +47,13 @@ $ cp config/ngsv.ini.example config/ngsv.ini
 host=mysql_host
 user=mysql_user
 password=mysql_password
-db_name=samdb
+db_name=ngsv
 
 [console]
 debug=False
 testing=False
 
-upload_dir=/path/upload_dir/
+upload_dir=/path/to/upload_dir/
 upload_dir_url=http://example.com/upload_files/
 
 host=example.com
@@ -63,28 +64,28 @@ Start MySQL and RabbitMQ.
 Start Celery.
 
 ```
-$ cd [ngsv dir]/console
-$ celery worker --app=taskserver -l info
+$ celery worker --app=ngsvconsole.taskserver.celery -l info
 ```
 
 Start web server
 
 ```
-$ ./app.py --wsgi
+$ ./run.py --wsgi
 ```
 
 Browse `http://localhost:5000`. And upload bam/bed files.
 
-### Load data of human genome
+## 4. Load data of human genome
 
-Load cytobands and refgenes to MySQL database by the following commandline ngsvtools.
+You cannot load human genome data into database on NGSV Console.
+Load cytobands and refgenes into MySQL database by the following commandline `ngsvtools`.
 
 ```
 $ ngsv loadcytoband [--dbuser USER] [--dbpassword PASSWORD]
 $ ngsv loadrefgene [--dbuser USER] [--dbpassword PASSWORD]
 ```
 
-## License
+# License
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 

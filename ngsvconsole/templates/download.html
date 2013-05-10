@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% set active_page = "download" %}
+
+{% block title %}Download | NGSV Console{% endblock %}
+
+{% block content %}
+  <div id="main" class="container">
+    <div class="row">
+      <div class="span12">
+        <h3>Sam/Bam</h3>
+        {% for f in samfiles %}
+          <p><a href="{{ f.url }}">{{ f.name }}</a></p>
+        {% endfor %}
+        {% if not samfiles %}
+          <p class="text-warning">Not found</p>
+        {% endif %}
+
+        <h3>Bed</h3>
+        {% for f in bedfiles %}
+          <p><a href="{{ f.url }}">{{ f.name }}</a></p>
+        {% endfor %}
+        {% if not bedfiles %}
+          <p class="text-warning">Not found</p>
+        {% endif %}
+
+        <h3>Cnv</h3>
+        {% for f in cnvfiles %}
+        <p><a href="{{ f.url }}">{{ f.name }}</a></p>
+        {% endfor %}
+        {% if not cnvfiles %}
+        <p class="text-warning">Not found</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
